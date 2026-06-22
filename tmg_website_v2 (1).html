@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<script>
+  (function() {
+    var pwd = sessionStorage.getItem('tmg_auth');
+    if (pwd !== 'TMG_2026!') {
+      pwd = prompt('TMG · Bitte Passwort eingeben:');
+      if (pwd !== 'TMG_2026!') {
+        document.documentElement.innerHTML = '<body style="background:#2B2D31;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;"><p style="color:#6B7280;font-size:14px;">Zugriff verweigert.</p></body>';
+        return;
+      }
+      sessionStorage.setItem('tmg_auth', pwd);
+    }
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talent Media Group · Employer Branding auf kununu</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --charcoal: #2B2D31;
+  --charcoal-mid: #3D4047;
+  --charcoal-light: #52555C;
+  --teal: #4AAFC4;
+  --teal-dark: #2C6F7F;
+  --teal-dim: rgba(74,175,196,0.10);
+  --teal-glow: rgba(74,175,196,0.18);
+  --off-white: #F7F8F9;
+  --light-gray: #E8EAED;
+  --mid-gray: #6B7280;
+  --white: #FFFFFF;
+  --green: #16A34A;
+  --red: #DC2626;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--off-white);
+  color: var(--charcoal);
+  line-height: 1.6;
+}
+
+/* ── STICKY NAV ─────────────────────────────── */
+.nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  background: rgba(43,45,49,0.97);
+  backdrop-filter: blur(8px);
+  padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+  border-bottom: 1px solid rgba(74,175,196,0.15);
+}
+.nav-logo {
+  font-size: 15px; font-weight: 800; color: var(--white);
+  letter-spacing: 0.04em;
+}
+.nav-logo span { color: var(--teal); }
+.nav-links {
+  display: flex; gap: 28px; list-style: none;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.65); text-decoration: none;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--teal); }
+.nav-cta {
+  background: var(--teal); color: var(--white);
+  border: none; padding: 9px 20px; border-radius: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: background 0.15s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--teal-dark); }
+
+/* ── HERO ────────────────────────────────────── */
+.hero {
+  background: var(--charcoal);
+  padding: 120px 32px 80px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -120px; right: -80px;
+  width: 500px; height: 500px; border-radius: 50%;
+  border: 1px solid rgba(74,175,196,0.08);
+}
+.hero::after {
+  content: '';
+  position: absolute; bottom: -80px; left: 10%;
+  width: 300px; height: 300px; border-radius: 50%;
+  border: 1px solid rgba(74,175,196,0.06);
+}
+.hero-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+  align-items: center; position: relative; z-index:1;
+}
+.hero-eyebrow {
+  display: inline-block;
+  background: var(--teal-dim); border: 1px solid rgba(74,175,196,0.3);
+  color: var(--teal); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 4px; margin-bottom: 20px;
+}
+.hero h1 {
+  color: var(--white); font-size: clamp(28px, 3.2vw, 44px);
+  font-weight: 800; line-height: 1.18; letter-spacing: -0.5px;
+  margin-bottom: 20px;
+}
+.hero h1 em {
+  font-style: normal; color: var(--teal);
+}
+.hero-sub {
+  color: rgba(255,255,255,0.65); font-size: 15px;
+  line-height: 1.7; margin-bottom: 32px; font-weight: 400;
+}
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--teal); color: var(--white);
+  padding: 14px 28px; border-radius: 8px; border: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  letter-spacing: 0.04em; transition: background 0.15s;
+  text-decoration: none; display: inline-block;
+}
+.btn-primary:hover { background: var(--teal-dark); }
+.btn-ghost {
+  background: transparent; color: rgba(255,255,255,0.7);
+  padding: 14px 28px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  letter-spacing: 0.04em; transition: all 0.15s;
+  text-decoration: none; display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+/* Hero Konfigurator */
+.hero-konfig {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(74,175,196,0.2);
+  border-radius: 16px; padding: 28px;
+}
+.konfig-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 20px;
+}
+.konfig-group { margin-bottom: 18px; }
+.konfig-label {
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5);
+  margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.konfig-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 6px 12px; border-radius: 20px; font-size: 11px;
+  font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.55); background: transparent;
+  font-family: 'Montserrat', sans-serif; transition: all 0.15s;
+}
+.chip.active {
+  background: var(--teal); color: var(--white);
+  border-color: var(--teal);
+}
+.chip:hover:not(.active) { border-color: var(--teal); color: var(--teal); }
+.konfig-result {
+  border-top: 1px solid rgba(74,175,196,0.15);
+  padding-top: 18px; margin-top: 4px;
+}
+.konfig-result-label {
+  font-size: 11px; color: rgba(255,255,255,0.4);
+  margin-bottom: 4px; font-weight: 500;
+}
+.konfig-price {
+  font-size: 32px; font-weight: 800; color: var(--white);
+}
+.konfig-price span { font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.4); }
+.konfig-setup {
+  font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 4px;
+}
+.konfig-cta {
+  margin-top: 16px; width: 100%;
+  background: var(--teal); color: var(--white);
+  border: none; padding: 13px; border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: background 0.15s;
+}
+.konfig-cta:hover { background: var(--teal-dark); }
+
+/* ── STAT LEISTE ─────────────────────────────── */
+.stats {
+  background: var(--charcoal-mid);
+  padding: 28px 32px;
+  border-bottom: 1px solid rgba(74,175,196,0.12);
+}
+.stats-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; divide-x: 1px solid rgba(255,255,255,0.06);
+}
+.stat-item {
+  padding: 8px 32px; border-right: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+.stat-item:first-child { padding-left: 0; }
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-size: 28px; font-weight: 800; color: var(--teal);
+  line-height: 1; margin-bottom: 4px;
+}
+.stat-text {
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  line-height: 1.4; font-weight: 500;
+}
+.stat-source {
+  font-size: 9px; color: rgba(255,255,255,0.25);
+  margin-top: 5px; font-style: italic;
+}
+
+/* ── SCHMERZ SECTION ─────────────────────────── */
+.pain {
+  background: var(--white);
+  padding: 80px 32px;
+}
+.pain-inner { max-width: 1080px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 12px;
+}
+.section-h2 {
+  font-size: clamp(22px, 2.5vw, 34px); font-weight: 800;
+  line-height: 1.2; letter-spacing: -0.3px; margin-bottom: 16px;
+}
+.section-lead {
+  font-size: 15px; color: var(--mid-gray); line-height: 1.8;
+  max-width: 580px; margin-bottom: 48px;
+}
+.pain-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.pain-card {
+  background: var(--off-white); border-radius: 12px;
+  padding: 28px 24px; border-left: 3px solid var(--teal);
+}
+.pain-icon { font-size: 24px; margin-bottom: 14px; }
+.pain-card h3 {
+  font-size: 15px; font-weight: 700; margin-bottom: 8px;
+}
+.pain-card p {
+  font-size: 13px; color: var(--mid-gray); line-height: 1.7;
+}
+.pain-source {
+  font-size: 10px; color: var(--teal-dark); margin-top: 10px;
+  font-style: italic; font-weight: 600;
+}
+.pain-stat {
+  font-size: 22px; font-weight: 800; color: var(--teal);
+  margin-bottom: 6px;
+}
+
+/* ── VORHER NACHHER ──────────────────────────── */
+.vorher-nachher {
+  background: var(--charcoal);
+  padding: 80px 32px;
+}
+.vn-inner { max-width: 1080px; margin: 0 auto; }
+.vn-inner .section-h2 { color: var(--white); }
+.vn-inner .section-lead { color: rgba(255,255,255,0.55); }
+.vn-grid {
+  display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0;
+  align-items: start;
+}
+.vn-col-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 20px; padding: 6px 14px;
+  border-radius: 4px; display: inline-block;
+}
+.vn-col-label.before { background: rgba(220,38,38,0.15); color: #F87171; }
+.vn-col-label.after { background: rgba(74,175,196,0.15); color: var(--teal); }
+.vn-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  margin-bottom: 16px;
+}
+.vn-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700; margin-top: 1px;
+}
+.vn-dot.bad { background: rgba(220,38,38,0.15); color: #F87171; }
+.vn-dot.good { background: rgba(74,175,196,0.15); color: var(--teal); }
+.vn-text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+.vn-arrow {
+  display: flex; align-items: center; justify-content: center;
+  padding-top: 36px; font-size: 24px; color: var(--teal); opacity: 0.6;
+}
+
+/* ── PRODUKTE ────────────────────────────────── */
+.produkte {
+  background: var(--off-white);
+  padding: 80px 32px;
+}
+.produkte-inner { max-width: 1080px; margin: 0 auto; }
+
+.produkt-block { margin-bottom: 64px; }
+.produkt-block:last-child { margin-bottom: 0; }
+
+.produkt-header {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
+  padding-bottom: 20px; border-bottom: 1px solid var(--light-gray);
+}
+.produkt-num {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--teal); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; flex-shrink: 0;
+}
+.produkt-title { font-size: 20px; font-weight: 800; }
+.produkt-sub { font-size: 13px; color: var(--mid-gray); margin-top: 2px; }
+
+/* Profil-Karten */
+.profil-size-bar {
+  background: var(--white); border-radius: 10px;
+  padding: 14px 18px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.profil-size-label { font-size: 12px; font-weight: 600; color: var(--mid-gray); }
+.profil-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.profil-chip {
+  padding: 5px 12px; border-radius: 20px; font-size: 11px;
+  font-weight: 600; cursor: pointer; border: 1px solid var(--light-gray);
+  color: var(--mid-gray); background: transparent;
+  font-family: 'Montserrat', sans-serif; transition: all 0.15s;
+}
+.profil-chip.active {
+  background: var(--teal); color: var(--white); border-color: var(--teal);
+}
+.profil-chip:hover:not(.active) { border-color: var(--teal); color: var(--teal); }
+
+.profil-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.profil-card {
+  background: var(--white); border-radius: 14px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 2px solid transparent; transition: all 0.15s;
+}
+.profil-card.featured {
+  border-color: var(--teal);
+  box-shadow: 0 4px 20px rgba(74,175,196,0.2);
+}
+.profil-card-head {
+  padding: 18px 20px 14px;
+}
+.profil-card-head.basic { background: #6B7280; }
+.profil-card-head.core { background: var(--teal); }
+.profil-card-head.pro { background: var(--teal-dark); }
+.profil-card-eyebrow {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 3px;
+}
+.profil-card-name {
+  font-size: 20px; font-weight: 800; color: var(--white);
+}
+.profil-card-tagline {
+  font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px;
+}
+.profil-card-body { padding: 20px; }
+.profil-card-price {
+  font-size: 24px; font-weight: 800; margin-bottom: 4px;
+}
+.profil-card-price span { font-size: 13px; font-weight: 400; color: var(--mid-gray); }
+.profil-card-setup {
+  font-size: 11px; color: var(--mid-gray); margin-bottom: 16px;
+}
+.profil-card-features { border-top: 1px solid var(--light-gray); padding-top: 14px; }
+.profil-feature {
+  display: flex; gap: 8px; font-size: 12px; margin-bottom: 8px; color: var(--charcoal);
+}
+.profil-feature-check { color: var(--teal); font-weight: 700; flex-shrink: 0; }
+.profil-card-badge {
+  position: absolute; top: 14px; right: 14px;
+  background: var(--white); color: var(--teal-dark);
+  font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+  letter-spacing: 0.06em;
+}
+.profil-card { position: relative; }
+.profil-unavail {
+  text-align: center; padding: 20px 0; color: var(--mid-gray); font-size: 13px;
+}
+
+/* Service Pakete */
+.service-cards {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+.service-card {
+  background: var(--white); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 2px solid transparent;
+}
+.service-card.featured { border-color: var(--teal-dark); box-shadow: 0 4px 16px rgba(44,111,127,0.18); }
+.service-card-head { padding: 14px 16px 12px; }
+.service-card-head.s1 { background: #6B7280; }
+.service-card-head.s2 { background: var(--teal); }
+.service-card-head.s3 { background: var(--teal-dark); }
+.service-card-head.s4 { background: var(--charcoal); }
+.service-card-name { font-size: 16px; font-weight: 800; color: var(--white); }
+.service-card-focus { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+.service-card-body { padding: 16px; }
+.service-price { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+.service-price span { font-size: 12px; font-weight: 400; color: var(--mid-gray); }
+.service-feature {
+  display: flex; gap: 7px; font-size: 12px; margin-bottom: 7px; color: var(--charcoal);
+  align-items: flex-start;
+}
+.service-feature-check { font-weight: 700; flex-shrink: 0; }
+.service-note {
+  margin-top: 12px; padding: 8px 10px; background: var(--off-white);
+  border-radius: 6px; font-size: 11px; color: var(--mid-gray);
+  border-left: 2px solid var(--light-gray);
+}
+
+/* Bewertungs-Karten */
+.review-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.review-card {
+  background: var(--white); border-radius: 14px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 2px solid transparent;
+}
+.review-card.featured { border-color: var(--teal-dark); box-shadow: 0 4px 20px rgba(44,111,127,0.18); }
+.review-card-head { padding: 16px 20px 14px; }
+.review-card-head.r1 { background: #6B7280; }
+.review-card-head.r2 { background: var(--teal); }
+.review-card-head.r3 { background: var(--teal-dark); }
+.review-card-name { font-size: 20px; font-weight: 800; color: var(--white); }
+.review-card-tagline { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+.review-card-body { padding: 20px; }
+.review-price { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+.review-price span { font-size: 13px; font-weight: 400; color: var(--mid-gray); }
+.review-responses-box {
+  padding: 12px 14px; border-radius: 8px; margin-bottom: 14px;
+}
+.review-responses-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 3px;
+}
+.review-responses-val { font-size: 15px; font-weight: 800; }
+.review-sla {
+  display: inline-block; margin-bottom: 12px; padding: 3px 10px;
+  background: #EFF6FF; border-radius: 20px;
+  font-size: 10px; font-weight: 700; color: #1D4ED8;
+}
+.review-feature {
+  display: flex; gap: 7px; font-size: 12px; margin-bottom: 7px; color: var(--charcoal);
+}
+.review-feature-check { font-weight: 700; flex-shrink: 0; }
+
+/* ── BEWERTUNGS-INSIGHT ──────────────────────── */
+.insight {
+  background: var(--charcoal);
+  padding: 72px 32px;
+}
+.insight-inner { max-width: 1080px; margin: 0 auto; }
+.insight-inner .section-h2 { color: var(--white); margin-bottom: 12px; }
+.insight-lead { font-size: 15px; color: rgba(255,255,255,0.55); margin-bottom: 48px; line-height: 1.7; max-width: 560px; }
+.insight-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.insight-card {
+  background: rgba(255,255,255,0.04); border-radius: 12px;
+  padding: 24px; border: 1px solid rgba(74,175,196,0.15);
+}
+.insight-num {
+  font-size: 36px; font-weight: 800; color: var(--teal); line-height: 1; margin-bottom: 8px;
+}
+.insight-text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+.insight-source {
+  font-size: 10px; color: rgba(255,255,255,0.25); margin-top: 10px;
+  font-style: italic;
+}
+
+/* ── BESTANDSKUNDEN ──────────────────────────── */
+.bestands {
+  background: var(--teal-dim);
+  border-top: 1px solid rgba(74,175,196,0.2);
+  border-bottom: 1px solid rgba(74,175,196,0.2);
+  padding: 56px 32px;
+}
+.bestands-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr auto; gap: 40px;
+  align-items: center;
+}
+.bestands h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.bestands p { font-size: 14px; color: var(--mid-gray); line-height: 1.7; }
+.bestands-checks { margin-top: 16px; display: flex; gap: 20px; flex-wrap: wrap; }
+.bestands-check {
+  display: flex; gap: 7px; align-items: center;
+  font-size: 13px; font-weight: 600;
+}
+.bestands-check-icon { color: var(--teal); font-weight: 800; }
+
+/* ── PROZESS ─────────────────────────────────── */
+.prozess {
+  background: var(--white);
+  padding: 80px 32px;
+}
+.prozess-inner { max-width: 1080px; margin: 0 auto; }
+.prozess-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  margin-top: 40px;
+}
+.prozess-step {
+  position: relative; padding-top: 20px;
+}
+.prozess-step::before {
+  content: '';
+  position: absolute; top: 34px; left: calc(50% + 20px);
+  right: -12px; height: 1px;
+  background: linear-gradient(90deg, var(--teal), transparent);
+}
+.prozess-step:last-child::before { display: none; }
+.prozess-num {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--teal); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; margin-bottom: 14px;
+}
+.prozess-step h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.prozess-step p { font-size: 12px; color: var(--mid-gray); line-height: 1.6; }
+.prozess-time {
+  display: inline-block; margin-top: 10px; font-size: 10px; font-weight: 700;
+  color: var(--teal); background: var(--teal-dim); padding: 3px 8px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* ── KONTAKT ─────────────────────────────────── */
+.kontakt {
+  background: var(--charcoal);
+  padding: 80px 32px;
+}
+.kontakt-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+  align-items: start;
+}
+.kontakt-left .section-h2 { color: var(--white); margin-bottom: 12px; }
+.kontakt-left .section-lead { color: rgba(255,255,255,0.55); margin-bottom: 32px; }
+.kontakt-promises { display: flex; flex-direction: column; gap: 12px; }
+.kontakt-promise {
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.kontakt-promise-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--teal-dim); border: 1px solid rgba(74,175,196,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.kontakt-promise-text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+.kontakt-promise-text strong { color: var(--white); display: block; margin-bottom: 2px; }
+
+.kontakt-form {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(74,175,196,0.2);
+  border-radius: 16px; padding: 32px;
+}
+.form-title {
+  font-size: 16px; font-weight: 700; color: var(--white);
+  margin-bottom: 24px;
+}
+.form-row { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,0.5); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.form-input {
+  width: 100%; padding: 11px 14px; border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--white); font-family: 'Montserrat', sans-serif;
+  font-size: 13px; outline: none; transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--teal); }
+.form-input::placeholder { color: rgba(255,255,255,0.25); }
+.form-chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.form-chip {
+  padding: 7px 14px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  cursor: pointer; border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.5); background: transparent;
+  font-family: 'Montserrat', sans-serif; transition: all 0.15s;
+}
+.form-chip.selected {
+  background: var(--teal-dim); color: var(--teal); border-color: rgba(74,175,196,0.4);
+}
+.form-submit {
+  width: 100%; padding: 14px; border-radius: 8px;
+  background: var(--teal); color: var(--white); border: none;
+  font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
+  transition: background 0.15s; margin-top: 8px;
+}
+.form-submit:hover { background: var(--teal-dark); }
+
+/* ── FOOTER ──────────────────────────────────── */
+.footer {
+  background: #1E2023;
+  padding: 28px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-logo { font-size: 14px; font-weight: 800; color: var(--white); }
+.footer-logo span { color: var(--teal); }
+.footer-note { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* ── UTILS ───────────────────────────────────── */
+.hidden { display: none; }
+.badge-pill {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.08em; padding: 3px 9px; border-radius: 20px;
+  position: absolute; top: 12px; right: 12px;
+}
+.badge-pill.white { background: white; color: var(--teal-dark); }
+
+@media (max-width: 768px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); }
+  .pain-grid { grid-template-columns: 1fr; }
+  .vn-grid { grid-template-columns: 1fr; }
+  .vn-arrow { display: none; }
+  .profil-cards { grid-template-columns: 1fr; }
+  .service-cards { grid-template-columns: repeat(2, 1fr); }
+  .review-cards { grid-template-columns: 1fr; }
+  .insight-grid { grid-template-columns: 1fr; }
+  .bestands-inner { grid-template-columns: 1fr; }
+  .prozess-steps { grid-template-columns: repeat(2, 1fr); }
+  .kontakt-inner { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">T<span>M</span>G <span style="font-weight:300;font-size:12px;letter-spacing:0.1em;color:rgba(255,255,255,0.5);">TALENT MEDIA</span></div>
+  <ul class="nav-links">
+    <li><a href="#profile">Profile</a></li>
+    <li><a href="#profilpflege">Profilpflege</a></li>
+    <li><a href="#bewertungen">Bewertungen</a></li>
+    <li><a href="#prozess">Prozess</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'})">Erstgespräch buchen</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Employer Branding · DACH</div>
+      <h1>Ihr kununu-Profil arbeitet gerade <em>gegen</em> Sie.</h1>
+      <p class="hero-sub">
+        90 % der DACH-Unternehmen ignorieren ihre Bewertungen. Kandidaten sehen ein leeres oder unkommentiertes Profil — und entscheiden sich für den Wettbewerber. TMG ändert das: professionell eingerichtet, laufend betreut, messbar wirksam.
+      </p>
+      <div class="hero-btns">
+        <a href="#kontakt" class="btn-primary">Kostenloses Erstgespräch</a>
+        <a href="#profile" class="btn-ghost">Pakete ansehen</a>
+      </div>
+    </div>
+
+    <!-- Konfigurator -->
+    <div class="hero-konfig">
+      <div class="konfig-title">Preis berechnen</div>
+      <div class="konfig-group">
+        <div class="konfig-label">Unternehmensgröße</div>
+        <div class="konfig-chips" id="sizeChips">
+          <button class="chip active" data-size="1-100">bis 100</button>
+          <button class="chip" data-size="101-200">101–200</button>
+          <button class="chip" data-size="201-500">201–500</button>
+          <button class="chip" data-size="501-1000">501–1.000</button>
+          <button class="chip" data-size="1000+">1.000+</button>
+        </div>
+      </div>
+      <div class="konfig-group">
+        <div class="konfig-label">Profil-Paket</div>
+        <div class="konfig-chips" id="paketChips">
+          <button class="chip" data-paket="basic">Basic</button>
+          <button class="chip active" data-paket="core">Core</button>
+          <button class="chip" data-paket="pro">Pro</button>
+        </div>
+      </div>
+      <div class="konfig-result">
+        <div class="konfig-result-label">Ihr Jahrespreis (zzgl. MwSt.)</div>
+        <div class="konfig-price" id="konfig-price">6.290 € <span>/ Jahr</span></div>
+        <div class="konfig-setup" id="konfig-setup">zzgl. einmalige Setup-Fee 790 €</div>
+      </div>
+      <button class="konfig-cta" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'})">Jetzt anfragen →</button>
+    </div>
+  </div>
+</section>
+
+<!-- STAT LEISTE -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-num">90,3%</div>
+      <div class="stat-text">der Arbeitgeber ignorieren kununu-Bewertungen komplett</div>
+      <div class="stat-source">Employer Telling Studie 2025</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">3,4%</div>
+      <div class="stat-text">Antwortquote auf kritische 1–2-Sterne-Reviews im DACH-Markt</div>
+      <div class="stat-source">Employer Telling Studie 2025</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">78%</div>
+      <div class="stat-text">der Jobsuchenden: Arbeitgebermarke ist entscheidendes Bewerbungskriterium</div>
+      <div class="stat-source">ZHAW Employer Branding Studie</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">+20%</div>
+      <div class="stat-text">längere Profilverweildauer führt zu höherer Anzahl qualifizierter Bewerbungen auf Ihren Stellenanzeigen</div>
+      <div class="stat-source">kununu Produktdaten</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHMERZ -->
+<section class="pain" id="schmerz">
+  <div class="pain-inner">
+    <div class="section-eyebrow">Das Problem</div>
+    <h2 class="section-h2">Was passiert, wenn Sie nichts tun</h2>
+    <p class="section-lead">Ein unvollständiges oder unkonfiguriertes kununu-Profil ist kein neutraler Zustand — es ist aktiv schädlich. Kandidaten vergleichen Sie mit Ihren Wettbewerbern, bevor sie sich bewerben.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-stat">78%</div>
+        <h3>Kandidaten googeln Sie</h3>
+        <p>Bevor ein Kandidat auf „Bewerben" klickt, schaut er auf kununu. Was er dort sieht — oder nicht sieht — entscheidet über Ihre Bewerbungsrate.</p>
+        <div class="pain-source">ZHAW Employer Branding Studie</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-stat">3,4%</div>
+        <h3>Kritische Bewertungen bleiben unbeantwortet</h3>
+        <p>Nur 3,4% der Arbeitgeber antworten auf 1–2-Sterne-Reviews. Kandidaten interpretieren Schweigen als Bestätigung der Kritik.</p>
+        <div class="pain-source">Employer Telling Studie 2025</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-stat">–42%</div>
+        <h3>Weniger qualifizierte Bewerbungen</h3>
+        <p>Unternehmen ohne optimiertes Profil erhalten nachweislich weniger und schlechter passende Bewerbungen als ihre Wettbewerber mit starker Arbeitgebermarke.</p>
+        <div class="pain-source">Talent Media GmbH Kundenbefragung 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VORHER / NACHHER -->
+<section class="vorher-nachher">
+  <div class="vn-inner">
+    <div class="section-eyebrow" style="color:var(--teal)">Was sich ändert</div>
+    <h2 class="section-h2">Mit und ohne TMG</h2>
+    <p class="section-lead" style="margin-bottom:40px;">Kein Employer Branding ist kein neutraler Zustand. Es kostet Sie täglich qualifizierte Bewerbungen.</p>
+    <div class="vn-grid">
+      <div>
+        <div class="vn-col-label before">Ohne TMG</div>
+        <div class="vn-item"><div class="vn-dot bad">✗</div><div class="vn-text">Unvollständiges oder leeres kununu-Profil — kein erster Eindruck</div></div>
+        <div class="vn-item"><div class="vn-dot bad">✗</div><div class="vn-text">Kritische Bewertungen bleiben öffentlich unbeantwortet</div></div>
+        <div class="vn-item"><div class="vn-dot bad">✗</div><div class="vn-text">Keine Synchronisierung offener Stellen auf relevanten Jobbörsen</div></div>
+        <div class="vn-item"><div class="vn-dot bad">✗</div><div class="vn-text">Kein Benchmarking gegen Wettbewerber in Ihrer Branche</div></div>
+        <div class="vn-item"><div class="vn-dot bad">✗</div><div class="vn-text">HR-Team verliert Zeit mit manueller Profilpflege und Kommentarbeantwortung anstatt sich Kandidaten zu widmen</div></div>
+      </div>
+      <div class="vn-arrow">→</div>
+      <div>
+        <div class="vn-col-label after">Mit TMG</div>
+        <div class="vn-item"><div class="vn-dot good">✓</div><div class="vn-text">CI-konformes Profil, professionell eingerichtet, binnen 72h live</div></div>
+        <div class="vn-item"><div class="vn-dot good">✓</div><div class="vn-text">Jede Bewertung beantwortet — KI-gestützt, markenkonform, innerhalb SLA</div></div>
+        <div class="vn-item"><div class="vn-dot good">✓</div><div class="vn-text">Automatische Stellensynchronisierung auf kununu und Jobportale</div></div>
+        <div class="vn-item"><div class="vn-dot good">✓</div><div class="vn-text">Monatliches Reporting mit Wettbewerbsanalyse und Handlungsempfehlungen</div></div>
+        <div class="vn-item"><div class="vn-dot good">✓</div><div class="vn-text">Ihr Customer Success Team bei TMG übernimmt — Done for you</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUKTE -->
+<section class="produkte" id="profile">
+  <div class="produkte-inner">
+    <div class="section-eyebrow">Unsere Leistungen</div>
+    <h2 class="section-h2">Drei Produktlinien — frei kombinierbar</h2>
+    <p class="section-lead">Starten Sie mit dem Profil, buchen Sie Profilpflege und Bewertungsmanagement nach Bedarf dazu. Monatlich kündbar.</p>
+
+    <!-- PROFIL -->
+    <div class="produkt-block">
+      <div class="produkt-header">
+        <div class="produkt-num">1</div>
+        <div>
+          <div class="produkt-title">kununu-Profile</div>
+          <div class="produkt-sub">Lizenz + professionelle Einrichtung durch TMG · Jahresvertrag</div>
+        </div>
+      </div>
+      <div class="profil-size-bar">
+        <div class="profil-size-label">Unternehmensgröße:</div>
+        <div class="profil-chips" id="profilSizeChips">
+          <button class="profil-chip active" data-s="1-100">1–100 MA</button>
+          <button class="profil-chip" data-s="101-200">101–200 MA</button>
+          <button class="profil-chip" data-s="201-500">201–500 MA</button>
+          <button class="profil-chip" data-s="501-1000">501–1.000 MA</button>
+          <button class="profil-chip" data-s="1000+">Ab 1.000 MA</button>
+        </div>
+      </div>
+      <div class="profil-cards">
+        <!-- Basic -->
+        <div class="profil-card" id="pc-basic">
+          <div class="profil-card-head basic">
+            <div class="profil-card-eyebrow">kununu</div>
+            <div class="profil-card-name">Basic</div>
+            <div class="profil-card-tagline">Einstieg & Sichtbarkeit</div>
+          </div>
+          <div class="profil-card-body" id="pcb-basic">
+            <div class="profil-card-price" id="pcp-basic">2.290 € <span>/ Jahr</span></div>
+            <div class="profil-card-setup" id="pcs-basic">zzgl. einmalig 490 € Setup</div>
+            <div class="profil-card-features">
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Basis-Arbeitgeberprofil auf kununu</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Initiales Setup durch TMG</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Jahres-Check-in</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Profilmonitoring</div>
+            </div>
+            <div style="margin-top:10px;font-size:11px;color:var(--mid-gray);font-style:italic;">Nur für Unternehmen bis 100 MA</div>
+          </div>
+        </div>
+        <!-- Core -->
+        <div class="profil-card featured" id="pc-core">
+          <span class="badge-pill white">Meist gebucht</span>
+          <div class="profil-card-head core">
+            <div class="profil-card-eyebrow">kununu</div>
+            <div class="profil-card-name">Core</div>
+            <div class="profil-card-tagline">Wachstum & Positionierung</div>
+          </div>
+          <div class="profil-card-body" id="pcb-core">
+            <div class="profil-card-price" id="pcp-core">7.890 € <span>/ Jahr</span></div>
+            <div class="profil-card-setup" id="pcs-core">zzgl. einmalig 790 € Setup</div>
+            <div class="profil-card-features">
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Vollständiges Employer Branding Profil</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>CI-konforme Gestaltung</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Synchronisierung offener Stellen</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Wettbewerbsanalyse</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Quartals-Reporting</div>
+            </div>
+          </div>
+        </div>
+        <!-- Pro -->
+        <div class="profil-card" id="pc-pro">
+          <span class="badge-pill white" style="background:var(--teal-dark);color:white;">Empfohlen</span>
+          <div class="profil-card-head pro">
+            <div class="profil-card-eyebrow">kununu</div>
+            <div class="profil-card-name">Pro</div>
+            <div class="profil-card-tagline">Marktführerschaft</div>
+          </div>
+          <div class="profil-card-body" id="pcb-pro">
+            <div class="profil-card-price" id="pcp-pro">9.390 € <span>/ Jahr</span></div>
+            <div class="profil-card-setup" id="pcs-pro">zzgl. einmalig 1.190 € Setup</div>
+            <div class="profil-card-features">
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Alles aus Core</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Strategischer Employer Brand Blueprint</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Distribution auf 100+ Kanälen</div>
+              <div class="profil-feature"><span class="profil-feature-check">✓</span>Monthly Reporting + Strategy Call</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Hiring Extension -->
+      <div style="margin-top:16px;background:var(--white);border-radius:10px;padding:20px 24px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--teal);text-transform:uppercase;margin-bottom:4px;">Add-on · All Jobs Flatrate</div>
+            <div style="font-weight:700;font-size:15px;margin-bottom:6px;">kununu Hiring Extension</div>
+            <div style="font-size:13px;color:var(--mid-gray);line-height:1.6;max-width:580px;">Automatische Distribution aller Ihrer Anzeigen auf kununu. Anbindung weiterer Portale und bestehender Recruitingpartner jederzeit möglich.</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:16px;font-weight:800;">Auf Anfrage</div>
+            <div style="font-size:10px;color:var(--mid-gray);">Preis nach Größe + Stellenanzahl</div>
+          </div>
+        </div>
+        <a href="#kontakt" style="display:inline-block;background:transparent;color:var(--teal);border:2px solid var(--teal);padding:9px 20px;border-radius:6px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.background='var(--teal)';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='var(--teal)'">Hier anfragen →</a>
+      </div>
+    </div>
+
+    <!-- PROFILPFLEGE -->
+    <div class="produkt-block" id="profilpflege">
+      <div class="produkt-header">
+        <div class="produkt-num">2</div>
+        <div>
+          <div class="produkt-title">Profilpflege</div>
+          <div class="produkt-sub">Laufende Betreuung des Profils · monatlich kündbar · kein Bewertungsmanagement</div>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;padding:12px 16px;background:rgba(74,175,196,0.06);border-radius:8px;border-left:3px solid var(--teal);font-size:13px;color:var(--mid-gray);">
+        Profilpflege umfasst ausschließlich Änderungen, Optimierungen, Synchronisierung und Reporting. Bewertungsmanagement (Review-Antworten) ist ein separates Modul.
+      </div>
+      <div class="service-cards">
+        <div class="service-card">
+          <div class="service-card-head s1">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2px;">Profilpflege</div>
+            <div class="service-card-name">Starter</div>
+            <div class="service-card-focus">Basis</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-price">290 € <span>/Monat</span></div>
+            <div class="service-feature"><span class="service-feature-check" style="color:#6B7280;">✓</span>Bis zu 2 Profil-Änderungen/Monat</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:#6B7280;">✓</span>Stellensynchronisierung</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:#6B7280;">✓</span>Quarterly Reporting</div>
+            <div class="service-note">ℹ️ Kein Bewertungsmanagement</div>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-head s2">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2px;">Profilpflege</div>
+            <div class="service-card-name">Professional</div>
+            <div class="service-card-focus">Pflege & Optimierung</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-price">490 € <span>/Monat</span></div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal);">✓</span>Bis zu 5 Profil-Änderungen/Monat</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal);">✓</span>Stellensynchronisierung</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal);">✓</span>Monthly Reporting</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal);">✓</span>Wettbewerbsanalyse quartalsweise</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal);">✓</span>Priority Support 48h</div>
+            <div class="service-note" style="border-left-color:var(--teal);color:var(--teal-dark);">Bewertungsmanagement separat zubuchbar</div>
+          </div>
+        </div>
+        <div class="service-card featured">
+          <div class="service-card-head s3">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2px;">Profilpflege</div>
+            <div class="service-card-name">Premium</div>
+            <div class="service-card-focus">Full-Service</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-price">790 € <span>/Monat</span></div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal-dark);">✓</span>Bis zu 10 Profil-Änderungen/Monat</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal-dark);">✓</span>Stellensynchronisierung</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal-dark);">✓</span>Monthly Reporting + Strategy Call</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal-dark);">✓</span>Wettbewerbsanalyse monatlich</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal-dark);">✓</span>Priority Support 24h</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--teal-dark);">✓</span>Employer Brand Blueprint Pflege</div>
+            <div class="service-note" style="border-left-color:var(--teal);color:var(--teal-dark);">Bewertungsmanagement separat zubuchbar</div>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-head s4">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2px;">Profilpflege</div>
+            <div class="service-card-name">Enterprise</div>
+            <div class="service-card-focus">Auf Anfrage</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-price" style="font-size:18px;">Auf Anfrage</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--charcoal-light);">✓</span>Dedizierter Account Manager</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--charcoal-light);">✓</span>Unlimitierte Änderungen</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--charcoal-light);">✓</span>Weekly Reporting</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--charcoal-light);">✓</span>Strategisches Quarterly Review</div>
+            <div class="service-feature"><span class="service-feature-check" style="color:var(--charcoal-light);">✓</span>Multi-Standort Management</div>
+            <div class="service-note" style="border-left-color:var(--teal);color:var(--teal-dark);">Bewertungsmanagement separat zubuchbar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEWERTUNGSMANAGEMENT -->
+    <div class="produkt-block" id="bewertungen">
+      <div class="produkt-header">
+        <div class="produkt-num">3</div>
+        <div>
+          <div class="produkt-title">Bewertungsmanagement</div>
+          <div class="produkt-sub">Ausschließlich Review-Handling · monatlich kündbar · auf jedes Profil zubuchbar</div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px;background:var(--charcoal);border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="font-size:24px;flex-shrink:0;">"</div>
+        <div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;font-style:italic;">Kandidaten lesen nicht nur die Bewertung — sie lesen die Antwort. Wie ein Unternehmen mit Kritik umgeht, ist das stärkste Signal für Unternehmenskultur.</div>
+          <div style="font-size:10px;color:var(--teal);font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:0.1em;">Employer Telling Studie 2025</div>
+        </div>
+      </div>
+      <div class="review-cards">
+        <div class="review-card">
+          <div class="review-card-head r1">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2px;">Bewertungsmanagement</div>
+            <div class="review-card-name">Monitor</div>
+            <div class="review-card-tagline">Überblick behalten</div>
+          </div>
+          <div class="review-card-body">
+            <div class="review-price">290 € <span>/Monat</span></div>
+            <div class="review-responses-box" style="background:rgba(107,114,128,0.1);">
+              <div class="review-responses-label" style="color:#6B7280;">Antworten inklusive</div>
+              <div class="review-responses-val">Bis zu 2 / Monat</div>
+            </div>
+            <div class="review-feature"><span class="review-feature-check" style="color:#6B7280;">✓</span>Monitoring aller Bewertungen</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:#6B7280;">✓</span>Alert bei 1–2-Sterne-Reviews</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:#6B7280;">✓</span>Monatliches Bewertungs-Summary</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:#6B7280;">✓</span>Handlungsempfehlungen</div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-head r2">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2px;">Bewertungsmanagement</div>
+            <div class="review-card-name">Respond</div>
+            <div class="review-card-tagline">Aktiv reagieren</div>
+          </div>
+          <div class="review-card-body">
+            <div class="review-price">590 € <span>/Monat</span></div>
+            <div class="review-responses-box" style="background:var(--teal-dim);">
+              <div class="review-responses-label" style="color:var(--teal);">Antworten inklusive</div>
+              <div class="review-responses-val">Bis zu 10 / Monat</div>
+            </div>
+            <div class="review-sla">SLA: 48h Response</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal);">✓</span>Bis zu 10 KI-gestützte Antworten/Monat</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal);">✓</span>Tonalität nach eurer CI</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal);">✓</span>Monitoring + Alerts inklusive</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal);">✓</span>Monatliches Reporting</div>
+          </div>
+        </div>
+        <div class="review-card featured">
+          <div class="review-card-head r3">
+            <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.65);text-transform:uppercase;margin-bottom:2px;">Bewertungsmanagement</div>
+            <div class="review-card-name">Manage</div>
+            <div class="review-card-tagline">Reputation aktiv steuern</div>
+          </div>
+          <div class="review-card-body">
+            <div class="review-price">990 € <span>/Monat</span></div>
+            <div class="review-responses-box" style="background:rgba(44,111,127,0.12);">
+              <div class="review-responses-label" style="color:var(--teal-dark);">Antworten inklusive</div>
+              <div class="review-responses-val">Unlimitierte Antworten</div>
+            </div>
+            <div class="review-sla">SLA: 24h Response</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal-dark);">✓</span>Unlimitierte Antworten</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal-dark);">✓</span>Proaktive Review-Kampagne</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal-dark);">✓</span>Reputationsstrategie & Beratung</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal-dark);">✓</span>Monitoring + Alerts inklusive</div>
+            <div class="review-feature"><span class="review-feature-check" style="color:var(--teal-dark);">✓</span>Monthly Review-Report</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT -->
+<section class="insight">
+  <div class="insight-inner">
+    <div class="section-eyebrow" style="color:var(--teal);">Marktdaten</div>
+    <h2 class="section-h2">Warum Bewertungsmanagement Ihr größter Hebel ist</h2>
+    <p class="insight-lead">Der DACH-Markt schläft — 9 von 10 Unternehmen reagieren nicht auf Feedback ihrer Mitarbeiter und Bewerber. Das ist Ihre Chance.</p>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-num">90,3%</div>
+        <div class="insight-text">der DACH-Arbeitgeber ignorieren kununu-Bewertungen vollständig — keine Reaktion, kein Signal an Kandidaten.</div>
+        <div class="insight-source">Employer Telling Studie 2025</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">3,4%</div>
+        <div class="insight-text">Antwortquote auf kritische 1–2-Sterne-Bewertungen. Wer antwortet, fällt sofort positiv auf — weil fast niemand es tut.</div>
+        <div class="insight-source">Employer Telling Studie 2025</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">83%</div>
+        <div class="insight-text">der Bewerber lesen Arbeitgeberantworten auf Bewertungen — und beurteilen daran die Unternehmenskultur.</div>
+        <div class="insight-source">Trendence / WU Wien, 2023, n=1.528</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BESTANDSKUNDEN -->
+<section class="bestands">
+  <div class="bestands-inner">
+    <div>
+      <div class="section-eyebrow">Für bestehende kununu-Kunden</div>
+      <h2 class="bestands-h2" style="font-size:22px;font-weight:800;margin-bottom:8px;">Sie haben schon ein kununu-Profil?</h2>
+      <p style="font-size:14px;color:var(--mid-gray);line-height:1.7;max-width:500px;">Kein Problem — wir optimieren, was Sie bereits haben. Profil-Audit, CI-Auffrischung, Bewertungsmanagement und laufende Pflege sind unabhängig vom Profil-Setup buchbar.</p>
+      <div class="bestands-checks">
+        <div class="bestands-check"><span class="bestands-check-icon">✓</span>Profil-Audit & Optimierung</div>
+        <div class="bestands-check"><span class="bestands-check-icon">✓</span>Bewertungsmanagement sofort startbar</div>
+        <div class="bestands-check"><span class="bestands-check-icon">✓</span>Kein Neuvertrag bei kununu nötig</div>
+      </div>
+    </div>
+    <div>
+      <a href="#kontakt" class="btn-primary" style="display:inline-block;white-space:nowrap;">Bestandsprofil optimieren →</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROZESS -->
+<section class="prozess" id="prozess">
+  <div class="prozess-inner">
+    <div class="section-eyebrow">So arbeiten wir</div>
+    <h2 class="section-h2">Von der Anfrage zum fertigen Profil</h2>
+    <p class="section-lead">Kein langer Onboarding-Prozess. Kein aufwendiges Briefing. Wir übernehmen — Done for you.</p>
+    <div class="prozess-steps">
+      <div class="prozess-step">
+        <div class="prozess-num">1</div>
+        <h3>Erstgespräch</h3>
+        <p>30 Minuten. Wir erfahren mehr über Ihre aktuelle Situation, Ihre Ziele und welche Pakete für Sie am meisten Sinn ergeben.</p>
+        <span class="prozess-time">Tag 1</span>
+      </div>
+      <div class="prozess-step">
+        <div class="prozess-num">2</div>
+        <h3>Employer Brand Audit</h3>
+        <p>Analyse Ihres aktuellen Profils, Wettbewerbsvergleich und Benchmark in Ihrer Branche.</p>
+        <span class="prozess-time">Woche 1</span>
+      </div>
+      <div class="prozess-step">
+        <div class="prozess-num">3</div>
+        <h3>Setup & Einrichtung</h3>
+        <p>CI-konforme Gestaltung, Texte, Bildwelt und Synchronisierung — Sie geben frei, wir setzen um.</p>
+        <span class="prozess-time">Woche 2</span>
+      </div>
+      <div class="prozess-step">
+        <div class="prozess-num">4</div>
+        <h3>Laufende Betreuung</h3>
+        <p>Ihr Customer Success Team übernimmt Pflege, Bewertungsantworten und monatliches Reporting.</p>
+        <span class="prozess-time">Ab Woche 3</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section class="kontakt" id="kontakt">
+  <div class="kontakt-inner">
+    <div class="kontakt-left">
+      <div class="section-eyebrow">Jetzt starten</div>
+      <h2 class="section-h2" style="color:var(--white);">Kostenloses Erstgespräch — 30 Minuten</h2>
+      <p class="section-lead">Wir schauen gemeinsam auf Ihr aktuelles Profil, zeigen Ihnen konkrete Quick Wins und machen ein Angebot. Kein Druck, kein Vertriebsgespräch.</p>
+      <div class="kontakt-promises">
+        <div class="kontakt-promise">
+          <div class="kontakt-promise-icon">⚡</div>
+          <div class="kontakt-promise-text"><strong>Binnen 72h live</strong>Wir richten Ihr Profil professionell ein — ohne dass Sie sich um Details kümmern müssen.</div>
+        </div>
+        <div class="kontakt-promise">
+          <div class="kontakt-promise-icon">📊</div>
+          <div class="kontakt-promise-text"><strong>Monatliches Reporting</strong>Sie sehen, was sich verändert — Profilaufrufe, Bewerbungsklicks, Wettbewerbsvergleich.</div>
+        </div>
+        <div class="kontakt-promise">
+          <div class="kontakt-promise-icon">🔓</div>
+          <div class="kontakt-promise-text"><strong>Monatlich kündbar</strong>Profilpflege und Bewertungsmanagement ohne Mindestlaufzeit. Kein Risiko.</div>
+        </div>
+      </div>
+    </div>
+    <div class="kontakt-form">
+      <div class="form-title">Anfrage senden</div>
+      <div class="form-row">
+        <label class="form-label">Name</label>
+        <input class="form-input" type="text" placeholder="Max Mustermann">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Unternehmen</label>
+        <input class="form-input" type="text" placeholder="Mustermann GmbH">
+      </div>
+      <div class="form-row">
+        <label class="form-label">E-Mail</label>
+        <input class="form-input" type="email" placeholder="max@mustermann.de">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Website</label>
+        <input class="form-input" type="text" placeholder="www.mustermann.de">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Ich interessiere mich für</label>
+        <div class="form-chips-wrap" id="interestChips">
+          <button class="form-chip" onclick="toggleChip(this)">kununu Basic</button>
+          <button class="form-chip" onclick="toggleChip(this)">kununu Core</button>
+          <button class="form-chip" onclick="toggleChip(this)">kununu Pro</button>
+          <button class="form-chip" onclick="toggleChip(this)">Profilpflege</button>
+          <button class="form-chip" onclick="toggleChip(this)">Bewertungsmanagement</button>
+          <button class="form-chip" onclick="toggleChip(this)">Hiring Extension</button>
+          <button class="form-chip" onclick="toggleChip(this)">Bestandsprofil-Optimierung</button>
+        </div>
+      </div>
+      <button class="form-submit">Anfrage senden →</button>
+      <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.3);text-align:center;">Wir melden uns binnen 24h · Kein Spam · Keine Weitergabe</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#1E2023;padding:40px 32px 20px;">
+  <div style="max-width:1080px;margin:0 auto;">
+    <!-- Footer Nav Links -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:32px;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div>
+        <div style="font-size:15px;font-weight:800;color:white;margin-bottom:16px;">T<span style="color:var(--teal);">M</span>G <span style="font-weight:300;font-size:12px;letter-spacing:0.1em;color:rgba(255,255,255,0.3);">TALENT MEDIA</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.35);line-height:1.7;">Eine Tochtergesellschaft der<br>Dupont Consulting Group · dupont-group.com</div>
+      </div>
+      <div style="display:flex;gap:40px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Navigation</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Home</a>
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Über Uns</a>
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">HireEngine</a>
+            <a href="#" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Karriere</a>
+            <a href="#kontakt" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Kontakt</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Leistungen</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <a href="#profile" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">kununu-Profile</a>
+            <a href="#profilpflege" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Profilpflege</a>
+            <a href="#bewertungen" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Bewertungsmanagement</a>
+            <a href="#kontakt" style="font-size:13px;color:rgba(255,255,255,0.5);text-decoration:none;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Erstgespräch buchen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bottom bar -->
+    <div style="padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);">© 2025 Talent Media GmbH · Alle Rechte vorbehalten · Alle Preise zzgl. MwSt.</div>
+      <div style="display:flex;gap:20px;">
+        <a href="#" style="font-size:11px;color:rgba(255,255,255,0.25);text-decoration:none;">Impressum</a>
+        <a href="#" style="font-size:11px;color:rgba(255,255,255,0.25);text-decoration:none;">Datenschutz</a>
+        <a href="#" style="font-size:11px;color:rgba(255,255,255,0.25);text-decoration:none;">AGB</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── HERO KONFIGURATOR ────────────────────────────
+const prices = {
+  "1-100":    { basic: {y:2290,s:490},  core: {y:6890,s:790},  pro: {y:8390,s:1190} },
+  "101-200":  { basic: null,            core: {y:7890,s:790},  pro: {y:9390,s:1190} },
+  "201-500":  { basic: null,            core: {y:10090,s:790}, pro: {y:12990,s:1190} },
+  "501-1000": { basic: null,            core: {y:13690,s:790}, pro: {y:17290,s:1190} },
+  "1000+":    { basic: null,            core: null,            pro: null }
+};
+
+let heroSize = "1-100", heroPaket = "core";
+
+function updateHeroPrice() {
+  const p = prices[heroSize][heroPaket];
+  const el = document.getElementById('konfig-price');
+  const es = document.getElementById('konfig-setup');
+  if (!p) {
+    el.innerHTML = 'Auf Anfrage';
+    es.textContent = 'Individuelles Angebot';
+  } else {
+    el.innerHTML = p.y.toLocaleString('de-DE') + ' € <span>/ Jahr</span>';
+    es.textContent = 'zzgl. einmalige Setup-Fee ' + p.s.toLocaleString('de-DE') + ' €';
+  }
+}
+
+document.getElementById('sizeChips').addEventListener('click', e => {
+  if (!e.target.dataset.size) return;
+  document.querySelectorAll('#sizeChips .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  heroSize = e.target.dataset.size;
+  updateHeroPrice();
+});
+document.getElementById('paketChips').addEventListener('click', e => {
+  if (!e.target.dataset.paket) return;
+  document.querySelectorAll('#paketChips .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  heroPaket = e.target.dataset.paket;
+  updateHeroPrice();
+});
+
+// ── PROFIL SIZE CHIPS ────────────────────────────
+const profilPrices = {
+  "1-100":    { basic: {y:2290,s:490},   core: {y:6890,s:790},   pro: {y:8390,s:1190} },
+  "101-200":  { basic: null,             core: {y:7890,s:790},   pro: {y:9390,s:1190} },
+  "201-500":  { basic: null,             core: {y:10090,s:790},  pro: {y:12990,s:1190} },
+  "501-1000": { basic: null,             core: {y:13690,s:790},  pro: {y:17290,s:1190} },
+  "1000+":    { basic: null,             core: null,             pro: null }
+};
+
+let profilSize = "1-100";
+
+function updateProfilCards() {
+  ['basic','core','pro'].forEach(tier => {
+    const p = profilPrices[profilSize][tier];
+    const priceEl = document.getElementById('pcp-' + tier);
+    const setupEl = document.getElementById('pcs-' + tier);
+    const card = document.getElementById('pc-' + tier);
+    if (!p) {
+      if (profilSize === "1000+") {
+        priceEl.innerHTML = 'Auf Anfrage';
+        setupEl.textContent = 'Individuelles Angebot';
+        card.style.opacity = '1';
+      } else {
+        priceEl.innerHTML = '—';
+        setupEl.textContent = 'Nicht verfügbar für diese Größe';
+        card.style.opacity = '0.35';
+      }
+    } else {
+      priceEl.innerHTML = p.y.toLocaleString('de-DE') + ' € <span>/ Jahr</span>';
+      setupEl.textContent = 'zzgl. einmalig ' + p.s.toLocaleString('de-DE') + ' € Setup';
+      card.style.opacity = '1';
+    }
+  });
+}
+
+document.getElementById('profilSizeChips').addEventListener('click', e => {
+  const chip = e.target.closest('.profil-chip');
+  if (!chip) return;
+  document.querySelectorAll('.profil-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  profilSize = chip.dataset.s;
+  updateProfilCards();
+});
+
+// ── FORM CHIPS ───────────────────────────────────
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+
+// Init
+updateHeroPrice();
+updateProfilCards();
+</script>
+</body>
+</html>

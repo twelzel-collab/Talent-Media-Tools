@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<script>
+  (function() {
+    var pwd = sessionStorage.getItem('tmg_auth');
+    if (pwd !== 'TMG_2026!') {
+      pwd = prompt('TMG · Bitte Passwort eingeben:');
+      if (pwd !== 'TMG_2026!') {
+        document.documentElement.innerHTML = '<body style="background:#2B2D31;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;"><p style="color:#6B7280;font-size:14px;">Zugriff verweigert.</p></body>';
+        return;
+      }
+      sessionStorage.setItem('tmg_auth', pwd);
+    }
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMG · Einwand-Handling Script · Marx-Methode</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #4AAFC4;
+    --teal-dark: #2C6F7F;
+    --teal-dim: rgba(74,175,196,0.09);
+    --charcoal: #2B2D31;
+    --charcoal-mid: #3D4047;
+    --off-white: #F7F8F9;
+    --light-gray: #E8EAED;
+    --mid-gray: #6B7280;
+    --white: #FFFFFF;
+    --amber: #92400E;
+    --amber-bg: #FFFBEB;
+    --green-bg: #F0FDF4;
+    --green: #15803D;
+    --red-bg: #FEF2F2;
+    --red: #991B1B;
+    --blue-bg: #EFF6FF;
+    --blue: #1D4ED8;
+    --purple-bg: #F5F3FF;
+    --purple: #6D28D9;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:var(--off-white); color:var(--charcoal); line-height:1.6; }
+
+  @media print {
+    .no-print { display:none !important; }
+    .obj-body { display:block !important; max-height:none !important; }
+    body { font-size:11px; background:white; }
+    .obj-card { break-inside:avoid; margin-bottom:16px; }
+    .hero { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+
+  /* HERO */
+  .hero {
+    background:var(--charcoal); padding:48px 40px 40px; position:relative; overflow:hidden;
+  }
+  .hero::after {
+    content:''; position:absolute; right:-80px; top:-80px;
+    width:360px; height:360px; border-radius:50%;
+    border:1px solid rgba(74,175,196,0.12);
+  }
+  .hero-inner { max-width:900px; margin:0 auto; position:relative; z-index:1; }
+  .badge {
+    display:inline-block; background:var(--teal); color:white;
+    font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    padding:4px 12px; border-radius:4px; margin-bottom:14px;
+  }
+  .hero h1 { color:white; font-size:26px; font-weight:800; letter-spacing:-0.3px; margin-bottom:6px; }
+  .hero p { color:#9CA3AF; font-size:13px; max-width:520px; line-height:1.7; margin-bottom:24px; }
+  .hero-meta { display:flex; gap:24px; flex-wrap:wrap; }
+  .meta-item { display:flex; align-items:center; gap:7px; font-size:11px; color:#9CA3AF; }
+  .meta-dot { width:5px; height:5px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+
+  /* MARX REFERENCE BOX */
+  .marx-ref {
+    max-width:900px; margin:28px auto 0; padding:0 20px;
+  }
+  .marx-grid {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+    background:var(--white); border-radius:12px; padding:18px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.07);
+  }
+  .marx-item { text-align:center; padding:10px 8px; }
+  .marx-icon { font-size:18px; margin-bottom:6px; }
+  .marx-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--teal); margin-bottom:3px; }
+  .marx-desc { font-size:11px; color:var(--mid-gray); line-height:1.4; }
+  .marx-divider { width:1px; background:var(--light-gray); }
+
+  /* FUNDAMENT */
+  .fundament-wrap { max-width:900px; margin:28px auto 0; padding:0 20px; }
+  .fundament {
+    background:var(--white); border-radius:12px; padding:24px 28px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.07); border-left:4px solid var(--teal);
+  }
+  .fund-eyebrow { font-size:10px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px; }
+  .fund-h { font-size:16px; font-weight:700; margin-bottom:6px; }
+  .fund-lead { font-size:13px; color:var(--mid-gray); line-height:1.7; margin-bottom:18px; }
+  .fund-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .fund-item { background:var(--teal-dim); border-radius:8px; padding:14px 16px; }
+  .fund-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--teal-dark); margin-bottom:4px; }
+  .fund-title { font-size:12px; font-weight:700; margin-bottom:3px; }
+  .fund-text { font-size:11px; color:var(--mid-gray); line-height:1.5; }
+  .killer-phrase {
+    background:var(--charcoal); border-radius:8px; padding:16px 20px;
+    margin-top:16px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .kq { font-size:28px; color:var(--teal); line-height:1; font-family:Georgia,serif; flex-shrink:0; margin-top:-4px; }
+  .ktext { font-size:13px; color:white; line-height:1.7; font-style:italic; }
+  .klabel { font-size:9px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:0.1em; margin-top:6px; font-style:normal; display:block; }
+
+  /* SECTION */
+  .section-wrap { max-width:900px; margin:32px auto 0; padding:0 20px 40px; }
+  .section-hd { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .section-hd h2 { font-size:16px; font-weight:700; }
+  .section-div { flex:1; height:1px; background:var(--light-gray); }
+  .section-count { font-size:11px; font-weight:600; color:var(--mid-gray); }
+
+  /* OBJECTION CARDS */
+  .obj-card {
+    background:var(--white); border-radius:12px; margin-bottom:10px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06);
+    border:1px solid var(--light-gray); overflow:hidden;
+    transition:box-shadow 0.15s;
+  }
+  .obj-card.open {
+    box-shadow:0 4px 16px rgba(74,175,196,0.14);
+    border-color:rgba(74,175,196,0.35);
+  }
+  .obj-header {
+    display:flex; align-items:flex-start; gap:14px;
+    padding:16px 20px; cursor:pointer; user-select:none;
+  }
+  .obj-num {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+    color:var(--teal); background:var(--teal-dim);
+    padding:3px 7px; border-radius:5px; flex-shrink:0; margin-top:2px;
+  }
+  .obj-title-wrap { flex:1; }
+  .obj-tag { font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--mid-gray); margin-bottom:3px; }
+  .obj-einwand { font-size:14px; font-weight:600; color:var(--charcoal); line-height:1.4; font-style:italic; }
+  .obj-einwand::before { content:'„'; }
+  .obj-einwand::after { content:'"'; }
+  .obj-badges { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+  .obj-badge {
+    font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px;
+    text-transform:uppercase; letter-spacing:0.06em;
+  }
+  .badge-kaufmotiv { background:#FEF3C7; color:#92400E; }
+  .badge-technik { background:var(--blue-bg); color:var(--blue); }
+  .obj-chevron { font-size:16px; color:var(--mid-gray); transition:transform 0.2s; flex-shrink:0; margin-top:3px; }
+  .obj-card.open .obj-chevron { transform:rotate(180deg); color:var(--teal); }
+
+  .obj-body { display:none; padding:0 20px 20px; }
+  .obj-card.open .obj-body { display:block; }
+  .obj-divider { height:1px; background:var(--light-gray); margin-bottom:18px; }
+
+  /* INNER BLOCKS */
+  .block { margin-bottom:14px; }
+  .block-label {
+    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em;
+    margin-bottom:7px; display:flex; align-items:center; gap:6px;
+  }
+  .block-label::after { content:''; flex:1; height:1px; background:var(--light-gray); }
+
+  .diagnose { background:var(--amber-bg); border-left:3px solid #F59E0B; border-radius:0 7px 7px 0; padding:11px 14px; font-size:12px; color:var(--amber); line-height:1.6; }
+  .diagnose .dl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#B45309; margin-bottom:3px; }
+
+  .kaufmotiv-block { background:var(--amber-bg); border-radius:7px; padding:10px 14px; display:flex; align-items:center; gap:10px; }
+  .km-icon { font-size:18px; flex-shrink:0; }
+  .km-label { font-size:10px; font-weight:700; color:#B45309; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1px; }
+  .km-text { font-size:12px; color:var(--amber); }
+
+  /* DAF BLOCK */
+  .daf-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .daf-item { border-radius:8px; padding:13px 14px; }
+  .daf-item.d { background:rgba(74,175,196,0.08); border-top:3px solid var(--teal); }
+  .daf-item.a { background:#F0FDF4; border-top:3px solid #16A34A; }
+  .daf-item.f { background:var(--blue-bg); border-top:3px solid var(--blue); }
+  .daf-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:5px; }
+  .daf-item.d .daf-label { color:var(--teal-dark); }
+  .daf-item.a .daf-label { color:#15803D; }
+  .daf-item.f .daf-label { color:var(--blue); }
+  .daf-text { font-size:12px; line-height:1.6; }
+
+  /* INA BLOCK */
+  .ina-block { background:var(--purple-bg); border-radius:8px; padding:14px 16px; }
+  .ina-label { font-size:9px; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:5px; }
+  .ina-verstarker { display:inline-block; background:var(--purple); color:white; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; margin-bottom:7px; }
+  .ina-text { font-size:12px; color:var(--charcoal); line-height:1.6; font-style:italic; }
+
+  /* CLOSING */
+  .closing-block { background:var(--charcoal); border-radius:8px; padding:14px 18px; }
+  .closing-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .closing-technik-badge {
+    font-size:9px; font-weight:700; padding:2px 9px; border-radius:10px;
+    text-transform:uppercase; letter-spacing:0.06em;
+    background:var(--teal); color:white;
+  }
+  .closing-label-inner { font-size:9px; font-weight:700; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.08em; }
+  .closing-text { font-size:12px; color:#E5E7EB; line-height:1.7; font-style:italic; }
+
+  /* NEVER SAY */
+  .never-say {
+    background:var(--red-bg); border-radius:7px; padding:10px 14px;
+    margin-top:12px; display:flex; gap:8px; font-size:11px; color:var(--red);
+  }
+  .never-icon { flex-shrink:0; font-weight:700; }
+
+  /* PRINT BTN */
+  .print-btn {
+    position:fixed; bottom:24px; right:24px;
+    background:var(--teal); color:white; border:none; border-radius:40px;
+    padding:11px 20px; font-size:12px; font-weight:700; cursor:pointer;
+    box-shadow:0 4px 14px rgba(74,175,196,0.4);
+    font-family:'Inter',sans-serif; letter-spacing:0.04em; z-index:100;
+  }
+  .print-btn:hover { background:var(--teal-dark); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge">Talent Media Group</div>
+    <h1>Einwand-Handling Script · Marx-Methode</h1>
+    <p>Alle 8 Einwände nach dem abschlussorientierten Gesprächsmodell von Alexander Marx — mit DAF-Technik, INA, Kaufmotiv-Analyse und passender Closing-Technik pro Einwand.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-dot"></div>8 Einwände</div>
+      <div class="meta-item"><div class="meta-dot"></div>DAF · INA · Kaufmotive · Abschlusstechniken</div>
+      <div class="meta-item"><div class="meta-dot"></div>Internes Vertriebsdokument</div>
+    </div>
+  </div>
+</div>
+
+<!-- MARX METHODEN REFERENZ -->
+<div class="marx-ref">
+  <div class="marx-grid">
+    <div class="marx-item">
+      <div class="marx-icon">🔄</div>
+      <div class="marx-label">DAF · Umkehrmethode</div>
+      <div class="marx-desc"><strong>D</strong>ezente Anerkennung → <strong>A</strong>ntwort → <strong>F</strong>rage (offen)</div>
+    </div>
+    <div class="marx-divider"></div>
+    <div class="marx-item">
+      <div class="marx-icon">🎯</div>
+      <div class="marx-label">INA</div>
+      <div class="marx-desc">Individuelle Nutzen-Argumentation mit Verstärker-Sprache nach Kaufmotiv</div>
+    </div>
+    <div class="marx-divider"></div>
+    <div class="marx-item">
+      <div class="marx-icon">💡</div>
+      <div class="marx-label">Kaufmotive</div>
+      <div class="marx-desc">Sicherheit · Wirtschaftlichkeit · Prestige · Bequemlichkeit · Soziales</div>
+    </div>
+    <div class="marx-divider"></div>
+    <div class="marx-item">
+      <div class="marx-icon">🏁</div>
+      <div class="marx-label">Closing-Techniken</div>
+      <div class="marx-desc">Mutmassung · Skala · Hop-oder-Top · Bestätigung · €-Bagel</div>
+    </div>
+  </div>
+</div>
+
+<!-- FUNDAMENT -->
+<div class="fundament-wrap">
+  <div class="fundament">
+    <div class="fund-eyebrow">Das Fundament · Warum unser Preis gerechtfertigt ist</div>
+    <h2 class="fund-h">Was der Kunde bei uns kauft — und was er ohne uns bekommt</h2>
+    <p class="fund-lead">Ein kununu-Profil direkt kaufen kann jeder. Was Kunden bei TMG kaufen, ist ein funktionierendes Employer Branding-Profil — eingerichtet, optimiert, betreut und strategisch positioniert. Wir sind keine Agentur. Wir sind kununu-Insider mit tiefen Plattform-Insights. Der Aufpreis ist kein Aufschlag, sondern der eigentliche Wert.</p>
+    <div class="fund-grid">
+      <div class="fund-item">
+        <div class="fund-num">01</div>
+        <div class="fund-title">Setup & professionelle Einrichtung</div>
+        <div class="fund-text">CI-konforme Bildwelt, Texte, Profilstruktur. Bei kununu direkt: eine leere Lizenz. Bei TMG: ein fertiges Profil, das vom ersten Tag wirkt.</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-num">02</div>
+        <div class="fund-title">kununu-Insider Expertise</div>
+        <div class="fund-text">Wir haben lange für und mit kununu gearbeitet — wir wissen, was wie warum wirkt und was nicht. Kein anderer Anbieter hat diesen Zugang.</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-num">03</div>
+        <div class="fund-title">Koordination & Entlastung</div>
+        <div class="fund-text">Der Kunde muss sich um nichts kümmern. Wir holen Inhalte ab, setzen um, koordinieren Freigaben. Das erleichtert Ihrer HR-Abteilung den Alltag messbar.</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-num">04</div>
+        <div class="fund-title">Laufende Qualitätssicherung</div>
+        <div class="fund-text">kununu entwickelt sich ständig weiter. Wir halten das Profil aktuell — ohne dass der Kunde es selbst beobachten muss. Kontinuierlich und verlässlich.</div>
+      </div>
+    </div>
+    <div class="killer-phrase">
+      <div class="kq">"</div>
+      <div>
+        <div class="ktext">Den kununu-Vertrag können Sie auch direkt abschließen — aber dann haben Sie eine Lizenz, kein Ergebnis. Wir stellen sicher, dass Ihr Profil nicht nur existiert, sondern wirkt.</div>
+        <span class="klabel">→ Killer Phrase · immer verfügbar haben</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EINWÄNDE -->
+<div class="section-wrap">
+  <div class="section-hd">
+    <h2>Einwand-Handling nach Marx-Methode</h2>
+    <div class="section-div"></div>
+    <div class="section-count">8 Szenarien</div>
+  </div>
+
+  <!-- EINWAND 1 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">01</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Preis · häufigster Einwand</div>
+        <div class="obj-einwand">Das ist zu teuer. Wir kaufen das Profil einfach direkt bei kununu.</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Wirtschaftlichkeit</span>
+          <span class="obj-badge badge-technik">DAF + Bestätigung + €-Bagel</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">💰</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Wirtschaftlichkeit</div>
+            <div class="km-text">Der Kunde sieht nur die Lizenzkostendifferenz — er hat noch nicht verstanden, dass er bei TMG kein Produkt kauft, sondern ein Ergebnis. Kein Wertproblem, sondern ein Erklärungsproblem. Der Bohrer: „Was genau meinen Sie mit zu teuer — im Vergleich wozu?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Das ist ein absolut nachvollziehbarer Gedanke — und Sie haben recht, die Lizenz ist direkt verfügbar."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort (€-Bagel)</div>
+            <div class="daf-text">„Was Sie dort bekommen, investieren Sie in eine leere Lizenz. Was Sie bei uns investieren, hat einen Wert von: fertiges Profil, Einrichtung, laufende Optimierung, Bewertungsmanagement und kununu-Insider-Wissen — alles inklusive."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Offene Frage</div>
+            <div class="daf-text">„Was wäre für Sie der konkrete Mehrwert, wenn Ihr Profil ab Tag 1 professionell steht und Sie sich darum nie mehr kümmern müssen?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">spart Ihnen → Wirtschaftlichkeit</span>
+          <div class="ina-text">„Ein TMG-gemanagtes Profil spart Ihnen die Zeit, den Aufwand und die Fehlerkosten, die entstehen, wenn ein unoptimiertes Profil qualifizierte Kandidaten abschreckt — das ist der teurere Weg."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Die Bestätigung</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Die Bestätigung</span>
+            <span class="closing-label-inner">Marx-Technik Phase 4</span>
+          </div>
+          <div class="closing-text">„Ich gebe Ihnen Brief und Siegel: Ja, wir sind teurer als die Direktlizenz. Teurer und besser — weil wir Ihnen binnen 72 Stunden ein fertiges, CI-konformes Profil liefern, das nachweislich mehr qualifizierte Bewerbungen generiert. Was brauchen Sie noch, um heute den nächsten Schritt zu gehen?"</div>
+        </div>
+      </div>
+
+      <div class="never-say">
+        <div class="never-icon">✗</div>
+        <div>Nie sagen: <em>„Unser Preis beinhaltet die kununu-Lizenz plus eine Management Fee."</em> — das lädt zur Nachkalkulation ein. Nie das Wort <em>„kostet"</em> — stattdessen: <em>„investieren"</em>, <em>„hat einen Wert von"</em>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EINWAND 2 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">02</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Eigenleistung</div>
+        <div class="obj-einwand">Das kann unsere HR-Abteilung selbst machen.</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Bequemlichkeit + Wirtschaftlichkeit</span>
+          <span class="obj-badge badge-technik">DAF + Bohrer + Mutmassung</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">⏱️</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Bequemlichkeit + Wirtschaftlichkeit</div>
+            <div class="km-text">Der Kunde unterschätzt den tatsächlichen Aufwand und überschätzt die interne Kapazität. Der Bohrer: „Wie viele Stunden pro Monat hat Ihre HR aktuell für Employer Branding und Bewertungsmanagement eingeplant?" — macht den echten Aufwand sichtbar.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Absolut — Ihr HR-Team hat die Kompetenz dafür, keine Frage."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort</div>
+            <div class="daf-text">„Die Frage ist nicht ob, sondern wann. Ein starkes kununu-Profil braucht laufende Optimierung, Antworten auf Bewertungen binnen 48h, Stellensynchronisierung und Wettbewerbsmonitoring. Das ist kein einmaliges Projekt — das ist ein Vollzeit-Nebenprojekt. Wir erleichtern Ihrer HR messbar den Alltag."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Offene Frage (Bohrer)</div>
+            <div class="daf-text">„Wie viele Stunden pro Woche hat Ihr HR-Team aktuell für Employer Branding-Aktivitäten fest eingeplant?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">erleichtert Ihnen → Bequemlichkeit</span>
+          <div class="ina-text">„Unsere Übernahme der kompletten Profilpflege erleichtert Ihrem HR-Team den Alltag — damit Ihre Kolleginnen und Kollegen sich auf das konzentrieren, was sie wirklich weiterbringt: Kandidaten finden, führen, begeistern."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Die Mutmassung</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Die Mutmassung</span>
+            <span class="closing-label-inner">Marx-Technik Phase 4</span>
+          </div>
+          <div class="closing-text">„Mal angenommen, Ihr HR-Team hätte durch uns jeden Monat 15 Stunden mehr für die wirklich wichtigen Themen — was würde das konkret für Ihr Recruiting bedeuten?" … (Klappe halten)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EINWAND 3 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">03</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Relevanz · Timing</div>
+        <div class="obj-einwand">Wir haben aktuell kein aktives Recruiting — wozu brauchen wir das Profil jetzt?</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Sicherheit + Wirtschaftlichkeit</span>
+          <span class="obj-badge badge-technik">DAF + INA + Mutmassung</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">🛡️</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Sicherheit + vorausschauende Wirtschaftlichkeit</div>
+            <div class="km-text">Der Kunde denkt, Employer Branding ist ein Recruiting-Tool das erst bei Bedarf aktiviert wird. Verständnisproblem: Employer Branding wirkt bevor man rekrutiert — es ist das Fundament, nicht das Werkzeug. Abschlussorientierte BOF: „Wann planen Sie die nächste Einstellungsrunde?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Vollkommen verständlich — das ist sogar ein Vorteil für Sie."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort</div>
+            <div class="daf-text">„Genau jetzt, ohne Recruiting-Druck, ist der richtige Moment. Die Erfahrung zeigt: Sie sollten mindestens 3, eher 6 Monate im Vorfeld live sein, um nachhaltige Brandingwirkung zu erzielen. Wer wartet bis er akut rekrutieren muss, startet zu spät — und zahlt dann mit schlechteren Bewerbungen."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Abschlussorientierte Frage</div>
+            <div class="daf-text">„Wann planen Sie Ihre nächste Einstellungsrunde? Dann arbeiten wir gemeinsam rückwärts — damit Ihr Profil zur richtigen Zeit wirkt."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">sichert Ihnen zu → Sicherheit</span>
+          <div class="ina-text">„Ein heute professionell eingerichtetes Profil sichert Ihnen zu, dass Sie beim nächsten Recruiting-Bedarf sofort auf ein starkes Employer Brand zurückgreifen können — ohne Vorlaufzeit, ohne Flickwerk."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Die Mutmassung</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Die Mutmassung</span>
+            <span class="closing-label-inner">Marx-Technik Phase 4</span>
+          </div>
+          <div class="closing-text">„Mal angenommen, in 4 Monaten haben Sie 3 offene Stellen zu besetzen — und Ihr Profil ist seit 6 Monaten live und optimiert. Wie viel einfacher wäre das im Vergleich zu heute?" … (Klappe halten)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EINWAND 4 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">04</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Budget</div>
+        <div class="obj-einwand">Das Budget haben wir gerade nicht. Vielleicht nächstes Jahr.</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Wirtschaftlichkeit</span>
+          <span class="obj-badge badge-technik">DAF + €-Bagel + Hop-oder-Top</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">📊</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Wirtschaftlichkeit · Schmerz vermeiden</div>
+            <div class="km-text">Entweder echte Budget-Restriktion oder Aufschiebereflex. Nicht sofort nachgeben — stattdessen Opportunity Cost sichtbar machen. Der €-Bagel: Merkmal → Preis → emotionaler Nutzen. Was kostet eine unbesetzte Stelle pro Monat?</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Das höre ich öfter — und ich respektiere das vollständig."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort (€-Bagel)</div>
+            <div class="daf-text">„Lassen Sie uns kurz rechnen: Was investieren Sie, wenn eine wichtige Stelle 3 Monate unbesetzt bleibt — in Produktivitätsverlust, Überlastung, verzögertem Wachstum? In den meisten Unternehmen sind das 5.000–15.000 € pro Monat. Unser Starter-Paket hat einen Wert von 290 € monatlich."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Offene Frage</div>
+            <div class="daf-text">„Wenn Sie wüssten, dass ein investierter Euro heute zwei Euro Rekrutierungskosten einspart — was würde das für Ihre Budget-Entscheidung bedeuten?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">schenkt Ihnen → Wirtschaftlichkeit</span>
+          <div class="ina-text">„Ein starkes Employer Brand schenkt Ihnen nachweislich bis zu 42% qualifiziertere Bewerbungen — das bedeutet für Sie: weniger Sichtung, weniger Fehlbesetzungen, niedrigere Cost-per-Hire."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Hop-oder-Top</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Hop oder Top</span>
+            <span class="closing-label-inner">Marx-Technik Phase 5</span>
+          </div>
+          <div class="closing-text">„Sagen Sie mir prinzipiell nein — oder sagen Sie ja, wenn der Mehrwert für Sie klar erkennbar ist? Wir haben ein Einstiegspaket ab 290 €/Monat, das wir heute aktivieren können. Nach 90 Tagen sehen Sie die ersten Ergebnisse und entscheiden dann, ob wir skalieren."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EINWAND 5 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">05</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Skepsis · ROI</div>
+        <div class="obj-einwand">Wie messen wir eigentlich, ob das etwas bringt?</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Sicherheit + Technische Neuerung</span>
+          <span class="obj-badge badge-technik">DAF + INA + Skala-Abschluss</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">📈</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Sicherheit + Technische Neuerung</div>
+            <div class="km-text">Sehr guter Einwand — zeigt ernstes Interesse. Kein Preis-Einwand, sondern ein Vertrauens- und Sicherheitseinwand. Mit konkreten Daten und dem Skala-Abschluss begegnen. IST-SOLL-Analyse: Wo stehen sie heute, wo wollen sie hin?</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Das ist die richtige Frage — und ich freue mich, dass Sie die stellen."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort</div>
+            <div class="daf-text">„Sie sehen im monatlichen Reporting: Profilaufrufe, Verweildauer, Bewerbungsklicks, Bewertungsscore-Entwicklung und direkter Wettbewerbsvergleich in Ihrer Branche. Zusätzlich: Unternehmen mit vollständig eingerichteten Profilen erzielen bis zu 20% längere Verweildauer — das führt messbar zu mehr qualifizierten Bewerbungen."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Zielorientierte Frage (IST-SOLL)</div>
+            <div class="daf-text">„Welche 2–3 KPIs sind für Sie persönlich entscheidend — damit wir das Reporting von Anfang an genau darauf ausrichten?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">verbessert für Sie → Technische Neuerung</span>
+          <div class="ina-text">„Unsere KI-gestützten Bewertungsantworten und das kununu-Dashboard verbessern für Sie die Sichtbarkeit und Reaktionsgeschwindigkeit auf Kandidatenfeedback — messbar, monatlich berichtet, transparent."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Skala-Abschluss</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Skala-Abschluss</span>
+            <span class="closing-label-inner">Marx-Technik Phase 5</span>
+          </div>
+          <div class="closing-text">„Herr/Frau [Name], stellen Sie sich eine Skala von 1 bis 10 vor — auf der die 10 bedeutet: Sie sind überzeugt, dass ein professionell gemanagtes kununu-Profil Ihrem Unternehmen messbar helfen wird. Wo stehen Sie gerade?" … (Klappe halten — der Wert unter 10 zeigt genau, was noch fehlt)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EINWAND 6 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">06</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Bewertungsmanagement · Eigenleistung</div>
+        <div class="obj-einwand">Auf Bewertungen antworten können wir selbst. Das brauchen wir nicht extra zu buchen.</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Bequemlichkeit + Prestige</span>
+          <span class="obj-badge badge-technik">DAF + Bohrer + Mutmassung</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">⭐</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Bequemlichkeit + Prestige (Reputation)</div>
+            <div class="km-text">Der Kunde hält Review-Management für einfach und unterschätzt den Konsequenz eines nicht-reagierenden Profils. Bohrer-Frage: „Wie viele Bewertungen haben Sie in den letzten 3 Monaten bekommen — und wie viele davon haben Sie tatsächlich beantwortet?" — macht das Problem sichtbar.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Natürlich können Sie das — technisch gesehen ist das jedem möglich."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort</div>
+            <div class="daf-text">„Laut Employer Telling Studie 2025 ignorieren 90,3% der DACH-Arbeitgeber Bewertungen komplett — die Antwortquote auf kritische 1–2-Sterne-Reviews liegt bei 3,4%. Kandidaten lesen nicht nur die Bewertung — sie lesen die Antwort. Wie ein Unternehmen mit Kritik umgeht, ist das stärkste Signal für Unternehmenskultur."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Bohrer-Frage</div>
+            <div class="daf-text">„Wie viele Bewertungen haben Sie in den letzten 3 Monaten erhalten — und wie viele davon haben Sie binnen 48 Stunden beantwortet?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">bedeutet für Sie → Prestige / Reputation</span>
+          <div class="ina-text">„Professionelle, konsistente Antworten auf alle Bewertungen bedeuten für Sie eine sichtbar stärkere Arbeitgebermarke — das unterscheidet Sie sofort von 90% Ihrer Wettbewerber, die schweigen."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Die Mutmassung</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Die Mutmassung</span>
+            <span class="closing-label-inner">Marx-Technik Phase 4</span>
+          </div>
+          <div class="closing-text">„Mal angenommen, jede Bewertung auf Ihrem Profil wäre binnen 24h professionell beantwortet — wie würde das auf einen Kandidaten wirken, der Sie mit einem Mitbewerber vergleicht, dessen Profil seit 6 Monaten stumm ist?" … (Klappe halten)</div>
+        </div>
+      </div>
+
+      <div class="never-say">
+        <div class="never-icon">✗</div>
+        <div>Nie sagen: <em>„Das ist halt Teil unseres Pakets."</em> — das klingt wie Upselling, nicht wie Mehrwert.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EINWAND 7 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">07</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Wettbewerbsvergleich</div>
+        <div class="obj-einwand">Wir haben Angebote von anderen Agenturen — die sind günstiger.</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Wirtschaftlichkeit + Sicherheit</span>
+          <span class="obj-badge badge-technik">DAF + Bestätigung + Bohrer</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">🏆</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Wirtschaftlichkeit + Sicherheit</div>
+            <div class="km-text">Wettbewerbs-Einwand. Nie den Wettbewerber schlecht reden — stattdessen die Vergleichsbasis verschieben. Bohrer: „Was genau ist in dem günstigeren Angebot konkret inklusive?" — oft fehlen genau die Leistungen, die den Unterschied machen. Unser Differenziator: kununu-Insider-Expertise.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Das glaube ich Ihnen — und es ist klug, Angebote zu vergleichen."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort (Bestätigung)</div>
+            <div class="daf-text">„Ja, wir sind teurer als viele Anbieter — und das aus gutem Grund. Wir sind keine Agentur, die kununu von außen kennt. Wir sind kununu-Insider: Wir haben lange für und mit kununu gearbeitet, haben tiefe Plattform-Insights und wissen genau, was wie warum wirkt — und was nicht. Das hat seinen Wert."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Bohrer-Frage</div>
+            <div class="daf-text">„Darf ich fragen, was im günstigeren Angebot konkret inklusive ist? Dann kann ich Ihnen genau zeigen, wo der Unterschied liegt."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">sichert Ihnen zu → Sicherheit</span>
+          <div class="ina-text">„Unsere kununu-Insider-Expertise sichert Ihnen zu, dass wir keine Zeit mit Trial-and-Error verlieren — wir wissen von Tag 1, was funktioniert. Das ist der Unterschied zwischen einer günstigen Lösung und einer wirksamen."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Die Bestätigung</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Die Bestätigung</span>
+            <span class="closing-label-inner">Marx-Technik Phase 4</span>
+          </div>
+          <div class="closing-text">„Ja, wir sind teurer — teurer und besser, weil wir die einzigen sind, die kununu von innen kennen. Wir arbeiten mit einer begrenzten Anzahl an Kunden, damit wir jeden Account wirklich betreuen können. Das ist der Unterschied, den Sie in den Ergebnissen sehen werden."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EINWAND 8 -->
+  <div class="obj-card" onclick="toggle(this)">
+    <div class="obj-header">
+      <div class="obj-num">08</div>
+      <div class="obj-title-wrap">
+        <div class="obj-tag">Commitment · Vertragsbindung</div>
+        <div class="obj-einwand">Wir wollen uns nicht langfristig binden. Was passiert, wenn wir kündigen?</div>
+        <div class="obj-badges">
+          <span class="obj-badge badge-kaufmotiv">Sicherheit + Bequemlichkeit</span>
+          <span class="obj-badge badge-technik">DAF + Hop-oder-Top + Mutmassung</span>
+        </div>
+      </div>
+      <div class="obj-chevron">▾</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-divider"></div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--amber);">Diagnose & Kaufmotiv</div>
+        <div class="kaufmotiv-block">
+          <div class="km-icon">🔓</div>
+          <div>
+            <div class="km-label">Kaufmotiv: Sicherheit + Bequemlichkeit</div>
+            <div class="km-text">Risiko-Aversion — der Kunde will Flexibilität und Kontrolle behalten. Das ist kein Nein, sondern ein Sicherheitsbedürfnis. Einfach nehmen und lösen: Profilpflege & Bewertungsmanagement sind monatlich kündbar — das ist unser stärkstes Argument hier.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--teal);">DAF · Umkehrmethode</div>
+        <div class="daf-grid">
+          <div class="daf-item d">
+            <div class="daf-label">D · Dezente Anerkennung</div>
+            <div class="daf-text">„Absolut verständlich — Flexibilität ist wichtig, gerade in einem sich schnell verändernden Markt."</div>
+          </div>
+          <div class="daf-item a">
+            <div class="daf-label">A · Antwort</div>
+            <div class="daf-text">„Unsere Profilpflege- und Bewertungsmanagement-Pakete sind monatlich kündbar — kein Mindestvertrag, keine Bindung. Das Profil selbst läuft als Jahresvertrag über kununu, das ist die Plattformbedingung. Aber alles was wir darüber hinaus leisten, können Sie jederzeit anpassen. Wir verdienen Ihr Vertrauen jeden Monat neu — nicht durch Vertragsdruck."</div>
+          </div>
+          <div class="daf-item f">
+            <div class="daf-label">F · Abschlussorientierte BOF</div>
+            <div class="daf-text">„Damit wir heute über das sprechen, was Sie wirklich brauchen, um danach eine finale Entscheidung zu treffen — mit welchem Paket wollen wir starten?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--purple);">INA · Individuelle Nutzen-Argumentation</div>
+        <div class="ina-block">
+          <div class="ina-label">Verstärker → Kaufmotiv</div>
+          <span class="ina-verstarker">ermöglicht Ihnen → Allrounder</span>
+          <div class="ina-text">„Unsere monatliche Kündigbarkeit ermöglicht Ihnen vollständige Flexibilität — Sie behalten die Kontrolle, sehen monatlich die Ergebnisse und entscheiden selbst, ob und wie Sie skalieren."</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label" style="color:var(--charcoal);">Closing · Hop-oder-Top + Mutmassung</div>
+        <div class="closing-block">
+          <div class="closing-header">
+            <span class="closing-technik-badge">Hop oder Top</span>
+            <span class="closing-label-inner">Marx-Technik Phase 5</span>
+          </div>
+          <div class="closing-text">„Sagen Sie prinzipiell nein — oder sagen Sie ja, wenn der Mehrwert für Sie erkennbar ist? Starten wir mit dem kleinsten Paket — nach 90 Tagen sehen Sie, wie wir arbeiten, und entscheiden dann, ob und wie wir ausbauen. Mal angenommen, nach 3 Monaten sind Sie begeistert — was würde das für unsere weitere Zusammenarbeit bedeuten?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:32px;text-align:center;font-size:11px;color:var(--mid-gray);">
+    Talent Media Group · Internes Vertriebsdokument · Basierend auf Alexander Marx Verkaufstraining Stufe 2 · Stand Juni 2025
+  </div>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">⬇ Als PDF speichern</button>
+
+<script>
+  function toggle(card) {
+    const isOpen = card.classList.contains('open');
+    document.querySelectorAll('.obj-card.open').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+  }
+</script>
+</body>
+</html>
