@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMG · Preisliste & Kalkulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal: #4AAFC4;
+  --teal-dark: #2C6F7F;
+  --teal-dim: rgba(74,175,196,0.10);
+  --charcoal: #2B2D31;
+  --charcoal-mid: #3D4047;
+  --off-white: #F7F8F9;
+  --light-gray: #E8EAED;
+  --mid-gray: #6B7280;
+  --white: #FFFFFF;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Montserrat',sans-serif; background:var(--off-white); color:var(--charcoal); }
+
+/* NAV */
+.nav {
+  background:var(--charcoal); padding:0 28px; height:56px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100;
+  border-bottom:1px solid rgba(74,175,196,0.15);
+}
+.nav-logo { font-size:14px; font-weight:800; color:var(--white); letter-spacing:0.04em; }
+.nav-logo span { color:var(--teal); }
+.nav-badge {
+  background:rgba(74,175,196,0.15); border:1px solid rgba(74,175,196,0.3);
+  color:var(--teal); font-size:10px; font-weight:700; padding:4px 12px;
+  border-radius:4px; letter-spacing:0.1em; text-transform:uppercase;
+}
+
+/* TABS */
+.tab-bar {
+  background:var(--charcoal); padding:0 28px;
+  display:flex; gap:4px; border-bottom:1px solid #3D4047;
+}
+.tab-btn {
+  background:none; border:none; cursor:pointer;
+  padding:12px 18px; font-family:'Montserrat',sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:0.04em;
+  color:#9CA3AF; border-bottom:2px solid transparent;
+  transition:all 0.15s;
+}
+.tab-btn.active { color:var(--teal); border-bottom-color:var(--teal); }
+.tab-btn:hover:not(.active) { color:rgba(255,255,255,0.7); }
+
+/* CONTENT */
+.content { max-width:920px; margin:0 auto; padding:28px 20px; }
+
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* SIZE BAR */
+.size-bar {
+  background:var(--white); border-radius:10px; padding:14px 18px;
+  margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.05);
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.size-label { font-size:12px; font-weight:600; color:var(--mid-gray); white-space:nowrap; }
+.chips { display:flex; gap:8px; flex-wrap:wrap; }
+.chip {
+  padding:6px 14px; border-radius:20px; font-size:11px; font-weight:600;
+  cursor:pointer; border:1px solid var(--light-gray);
+  color:var(--mid-gray); background:transparent;
+  font-family:'Montserrat',sans-serif; transition:all 0.15s;
+}
+.chip.active { background:var(--teal); color:var(--white); border-color:var(--teal); }
+.chip:hover:not(.active) { border-color:var(--teal); color:var(--teal); }
+
+/* CARDS GRID */
+.cards-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.cards-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+
+/* CARD */
+.card {
+  background:var(--white); border-radius:14px; overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);
+  border:2px solid transparent; position:relative;
+  transition:box-shadow 0.15s;
+}
+.card.featured { border-color:var(--teal); box-shadow:0 4px 20px rgba(74,175,196,0.2); }
+.card.featured-dark { border-color:var(--teal-dark); box-shadow:0 4px 20px rgba(44,111,127,0.2); }
+
+.card-head { padding:16px 20px 14px; }
+.card-head.gray  { background:#6B7280; }
+.card-head.teal  { background:var(--teal); }
+.card-head.dark  { background:var(--teal-dark); }
+.card-head.charcoal { background:var(--charcoal); }
+
+.card-eyebrow {
+  font-size:9px; font-weight:700; letter-spacing:0.14em;
+  text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:3px;
+}
+.card-name { font-size:19px; font-weight:800; color:var(--white); }
+.card-sub  { font-size:11px; color:rgba(255,255,255,0.75); margin-top:2px; }
+
+.card-body { padding:18px 20px; }
+.card-price { font-size:24px; font-weight:800; margin-bottom:4px; }
+.card-price small { font-size:12px; font-weight:400; color:var(--mid-gray); }
+.card-setup { font-size:11px; color:var(--mid-gray); margin-bottom:14px; }
+
+.card-features { border-top:1px solid var(--light-gray); padding-top:12px; }
+.feat {
+  display:flex; gap:8px; font-size:12px; margin-bottom:7px;
+  color:var(--charcoal); align-items:flex-start; line-height:1.4;
+}
+.feat-check { font-weight:700; flex-shrink:0; margin-top:1px; }
+
+.card-note {
+  margin-top:12px; padding:7px 10px; background:var(--off-white);
+  border-radius:6px; font-size:11px; color:var(--mid-gray);
+  border-left:2px solid var(--light-gray);
+}
+.card-note.teal-note { border-left-color:var(--teal); color:var(--teal-dark); }
+
+.card-badge {
+  position:absolute; top:12px; right:12px;
+  font-size:9px; font-weight:700; padding:3px 9px; border-radius:20px;
+  background:rgba(255,255,255,0.9); color:var(--teal-dark);
+}
+
+.card-sla {
+  display:inline-block; margin-bottom:10px; padding:3px 10px;
+  background:#EFF6FF; border-radius:20px;
+  font-size:10px; font-weight:700; color:#1D4ED8;
+}
+
+.responses-box {
+  padding:10px 12px; border-radius:8px; margin-bottom:12px;
+}
+.responses-label {
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.08em; margin-bottom:2px;
+}
+.responses-val { font-size:14px; font-weight:800; }
+
+/* UNAVAILABLE */
+.card.dim { opacity:0.35; }
+.unavail-msg { text-align:center; padding:20px 0; color:var(--mid-gray); font-size:13px; }
+
+/* ADDON BAR */
+.addon-bar {
+  margin-top:14px; background:var(--white); border-radius:10px;
+  padding:14px 18px; box-shadow:0 1px 3px rgba(0,0,0,0.05);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+}
+.addon-left .addon-eyebrow { font-size:10px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:3px; }
+.addon-left .addon-title { font-size:14px; font-weight:700; }
+.addon-left .addon-desc { font-size:12px; color:var(--mid-gray); margin-top:2px; }
+.addon-right { font-size:16px; font-weight:800; white-space:nowrap; }
+.addon-right small { font-size:10px; color:var(--mid-gray); display:block; text-align:right; }
+
+/* INFO BAR */
+.info-bar {
+  margin-bottom:16px; padding:12px 16px; background:rgba(74,175,196,0.06);
+  border-radius:8px; border-left:3px solid var(--teal);
+  font-size:13px; color:var(--mid-gray);
+}
+
+/* INSIGHT */
+.insight-block {
+  margin-bottom:20px; background:var(--charcoal); border-radius:10px;
+  padding:16px 20px; display:flex; gap:14px; align-items:flex-start;
+}
+.insight-quote { font-size:28px; color:var(--teal); flex-shrink:0; line-height:1; font-family:Georgia,serif; }
+.insight-text { font-size:13px; color:rgba(255,255,255,0.75); line-height:1.7; font-style:italic; }
+.insight-src { font-size:10px; color:var(--teal); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-top:6px; font-style:normal; }
+
+/* MARKET INSIGHT */
+.market-insight {
+  margin-top:20px; padding:12px 16px; background:#FFFBEB;
+  border-radius:8px; border-left:3px solid #F59E0B;
+  font-size:13px; color:#92400E;
+}
+
+/* SECTION HEADER */
+.section-hd { margin-bottom:20px; }
+.section-eyebrow { font-size:10px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:6px; }
+.section-title { font-size:18px; font-weight:800; }
+.section-sub { font-size:12px; color:var(--mid-gray); margin-top:2px; }
+
+/* FOOTER NOTE */
+.foot-note { margin-top:28px; text-align:center; font-size:11px; color:var(--mid-gray); }
+
+/* ── KALKULATOR ── */
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+.calc-left {
+  background:var(--white); border-radius:14px; padding:24px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.07);
+}
+.calc-left h3 { font-size:15px; font-weight:700; margin-bottom:20px; }
+
+.calc-section { margin-bottom:18px; }
+.calc-section-label {
+  font-size:11px; font-weight:700; color:var(--teal);
+  text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;
+  display:flex; align-items:center; gap:8px;
+}
+.calc-section-label input[type=checkbox] { cursor:pointer; }
+
+.calc-select {
+  width:100%; padding:9px 12px; border-radius:8px;
+  border:1px solid var(--light-gray); font-family:'Montserrat',sans-serif;
+  font-size:13px; color:var(--charcoal); background:var(--white);
+  outline:none; cursor:pointer; margin-bottom:6px;
+}
+.calc-select:focus { border-color:var(--teal); }
+
+.calc-hint { font-size:11px; color:var(--mid-gray); margin-top:0; }
+
+/* DISCOUNT */
+.discount-row {
+  margin-top:14px; padding:14px 16px;
+  background:rgba(74,175,196,0.06);
+  border:1px solid rgba(74,175,196,0.2); border-radius:10px;
+}
+.discount-title {
+  font-size:11px; font-weight:700; color:var(--teal-dark);
+  text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;
+}
+.discount-inputs { display:flex; gap:10px; align-items:center; }
+.discount-field {
+  flex:1; display:flex; flex-direction:column; gap:4px;
+}
+.discount-field label { font-size:10px; font-weight:600; color:var(--mid-gray); }
+.discount-input-wrap { position:relative; }
+.discount-input {
+  width:100%; padding:8px 28px 8px 10px; border-radius:7px;
+  border:1px solid var(--light-gray); font-family:'Montserrat',sans-serif;
+  font-size:13px; font-weight:700; color:var(--charcoal);
+  background:var(--white); outline:none;
+}
+.discount-input:focus { border-color:var(--teal); }
+.discount-suffix {
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  font-size:12px; font-weight:700; color:var(--mid-gray);
+}
+.discount-divider { font-size:16px; color:var(--mid-gray); padding-top:16px; }
+
+/* OFFER PANEL */
+.calc-right { display:flex; flex-direction:column; gap:16px; }
+
+.offer-panel {
+  background:var(--charcoal); border-radius:14px; padding:24px; color:var(--white);
+}
+.offer-label {
+  font-size:11px; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:16px;
+}
+.offer-line {
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:8px; font-size:13px; color:#9CA3AF;
+}
+.offer-line.discount-line { color:#FCD34D; }
+.offer-divider { border:none; border-top:1px solid #3D4047; margin:14px 0; }
+.offer-total-month {
+  display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;
+}
+.offer-total-month span:first-child { font-size:13px; color:#9CA3AF; }
+.offer-total-month span:last-child { font-size:20px; font-weight:800; color:var(--teal); }
+.offer-total-year {
+  display:flex; justify-content:space-between; align-items:baseline;
+}
+.offer-total-year span:first-child { font-size:13px; color:#9CA3AF; }
+.offer-total-year span:last-child { font-size:28px; font-weight:800; color:var(--white); }
+
+.offer-na { font-size:14px; color:#9CA3AF; }
+
+@media (max-width:700px) {
+  .cards-3 { grid-template-columns:1fr; }
+  .cards-4 { grid-template-columns:repeat(2,1fr); }
+  .calc-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">T<span>M</span>G <span style="font-weight:300;font-size:11px;letter-spacing:0.1em;color:rgba(255,255,255,0.4);">TALENT MEDIA</span></div>
+  <div class="nav-badge">Internes Tool · Vertrieb</div>
+</nav>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('profile',this)">kununu-Profile</button>
+  <button class="tab-btn" onclick="showTab('pflege',this)">Profilpflege</button>
+  <button class="tab-btn" onclick="showTab('bewertung',this)">Bewertungsmanagement</button>
+  <button class="tab-btn" onclick="showTab('hiring',this)">Hiring Extension</button>
+  <button class="tab-btn" onclick="showTab('kalkulator',this)">Kalkulator</button>
+</div>
+
+<div class="content">
+
+  <!-- ── PROFILE ── -->
+  <div id="tab-profile" class="tab-panel active">
+    <div class="size-bar">
+      <span class="size-label">Unternehmensgröße:</span>
+      <div class="chips" id="profileSizeChips">
+        <button class="chip active" data-s="1-100">1–100 MA</button>
+        <button class="chip" data-s="101-200">101–200 MA</button>
+        <button class="chip" data-s="201-500">201–500 MA</button>
+        <button class="chip" data-s="501-1000">501–1.000 MA</button>
+        <button class="chip" data-s="1000+">Ab 1.000 MA</button>
+      </div>
+    </div>
+
+    <div class="cards-3" id="profileCards">
+      <!-- Basic -->
+      <div class="card" id="card-basic">
+        <div class="card-head gray">
+          <div class="card-eyebrow">kununu</div>
+          <div class="card-name">Basic</div>
+          <div class="card-sub">Einstieg &amp; Sichtbarkeit</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price" id="price-basic">2.290 € <small>/ Jahr</small></div>
+          <div class="card-setup" id="setup-basic">zzgl. einmalig 490 € Setup</div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Basis-Arbeitgeberprofil auf kununu</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Initiales Setup durch TMG</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Jahres-Check-in</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Profilmonitoring</div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:var(--mid-gray);font-style:italic;">Nur für Unternehmen bis 100 MA</div>
+        </div>
+      </div>
+      <!-- Core -->
+      <div class="card featured" id="card-core">
+        <div class="card-badge">Meist gebucht</div>
+        <div class="card-head teal">
+          <div class="card-eyebrow">kununu</div>
+          <div class="card-name">Core</div>
+          <div class="card-sub">Wachstum &amp; Positionierung</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price" id="price-core">7.890 € <small>/ Jahr</small></div>
+          <div class="card-setup" id="setup-core">zzgl. einmalig 790 € Setup</div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Vollständiges Employer Branding Profil</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>CI-konforme Gestaltung</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Synchronisierung offener Stellen</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Wettbewerbsanalyse</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Quartals-Reporting</div>
+          </div>
+        </div>
+      </div>
+      <!-- Pro -->
+      <div class="card" id="card-pro">
+        <div class="card-badge" style="background:var(--teal-dark);color:white;">Empfohlen</div>
+        <div class="card-head dark">
+          <div class="card-eyebrow">kununu</div>
+          <div class="card-name">Pro</div>
+          <div class="card-sub">Marktführerschaft</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price" id="price-pro">9.390 € <small>/ Jahr</small></div>
+          <div class="card-setup" id="setup-pro">zzgl. einmalig 1.190 € Setup</div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Alles aus Core</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Strategischer Employer Brand Blueprint</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Distribution auf 100+ Kanälen</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Monthly Reporting + Strategy Call</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="addon-bar">
+      <div class="addon-left">
+        <div class="addon-eyebrow">Add-on</div>
+        <div class="addon-title">kununu Hiring Extension</div>
+        <div class="addon-desc">Job-Flatrate: automatische Distribution aller Ihrer Anzeigen auf kununu. Anbindung weiterer Portale und bestehender Recruitingpartner jederzeit möglich.</div>
+      </div>
+      <div class="addon-right">Auf Anfrage <small>Preis nach Größe + Stellenanzahl</small></div>
+    </div>
+  </div>
+
+  <!-- ── PROFILPFLEGE ── -->
+  <div id="tab-pflege" class="tab-panel">
+    <div class="info-bar">
+      <strong>Profilpflege</strong> umfasst ausschließlich Änderungen, Optimierungen, Synchronisierung und Reporting — kein Bewertungsmanagement. Monatlich kündbar.
+    </div>
+    <div class="cards-4">
+      <!-- Starter -->
+      <div class="card">
+        <div class="card-head gray">
+          <div class="card-eyebrow">Profilpflege</div>
+          <div class="card-name">Starter</div>
+          <div class="card-sub">Basis</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price">290 € <small>/Monat</small></div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Bis zu 2 Profil-Änderungen/Monat</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Stellensynchronisierung</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Quarterly Reporting</div>
+          </div>
+          <div class="card-note">ℹ️ Kein Bewertungsmanagement</div>
+        </div>
+      </div>
+      <!-- Professional -->
+      <div class="card">
+        <div class="card-head teal">
+          <div class="card-eyebrow">Profilpflege</div>
+          <div class="card-name">Professional</div>
+          <div class="card-sub">Pflege &amp; Optimierung</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price">490 € <small>/Monat</small></div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Bis zu 5 Profil-Änderungen/Monat</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Stellensynchronisierung</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Monthly Reporting</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Wettbewerbsanalyse quartalsweise</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Priority Support 48h</div>
+          </div>
+          <div class="card-note teal-note">Bewertungsmanagement separat zubuchbar</div>
+        </div>
+      </div>
+      <!-- Premium -->
+      <div class="card featured-dark">
+        <div class="card-head dark">
+          <div class="card-eyebrow">Profilpflege</div>
+          <div class="card-name">Premium</div>
+          <div class="card-sub">Full-Service</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price">790 € <small>/Monat</small></div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Bis zu 10 Profil-Änderungen/Monat</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Stellensynchronisierung</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Monthly Reporting + Strategy Call</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Wettbewerbsanalyse monatlich</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Priority Support 24h</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Employer Brand Blueprint Pflege</div>
+          </div>
+          <div class="card-note teal-note">Bewertungsmanagement separat zubuchbar</div>
+        </div>
+      </div>
+      <!-- Enterprise -->
+      <div class="card">
+        <div class="card-head charcoal">
+          <div class="card-eyebrow">Profilpflege</div>
+          <div class="card-name">Enterprise</div>
+          <div class="card-sub">Auf Anfrage</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price" style="font-size:18px;">Auf Anfrage</div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:var(--mid-gray)">✓</span>Dedizierter Account Manager</div>
+            <div class="feat"><span class="feat-check" style="color:var(--mid-gray)">✓</span>Unlimitierte Änderungen &amp; Optimierungen</div>
+            <div class="feat"><span class="feat-check" style="color:var(--mid-gray)">✓</span>Weekly Reporting</div>
+            <div class="feat"><span class="feat-check" style="color:var(--mid-gray)">✓</span>Strategisches Quarterly Review</div>
+            <div class="feat"><span class="feat-check" style="color:var(--mid-gray)">✓</span>Multi-Standort Management</div>
+          </div>
+          <div class="card-note teal-note">Bewertungsmanagement separat zubuchbar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BEWERTUNGSMANAGEMENT ── -->
+  <div id="tab-bewertung" class="tab-panel">
+    <div class="insight-block">
+      <div class="insight-quote">"</div>
+      <div>
+        <div class="insight-text">Kandidaten lesen nicht nur die Bewertung — sie lesen die Antwort. Wie ein Unternehmen mit Kritik umgeht, ist das stärkste Signal für Unternehmenskultur.</div>
+        <div class="insight-src">Employer Telling Studie 2025</div>
+      </div>
+    </div>
+    <div class="cards-3">
+      <!-- Monitor -->
+      <div class="card">
+        <div class="card-head gray">
+          <div class="card-eyebrow">Bewertungsmanagement</div>
+          <div class="card-name">Monitor</div>
+          <div class="card-sub">Überblick behalten</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price">290 € <small>/Monat</small></div>
+          <div class="responses-box" style="background:rgba(107,114,128,0.1);">
+            <div class="responses-label" style="color:#6B7280;">Antworten inklusive</div>
+            <div class="responses-val">Bis zu 2 / Monat</div>
+          </div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Monitoring aller neuen Bewertungen</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Alert bei kritischen Reviews (1–2 Sterne)</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Monatliches Bewertungs-Summary</div>
+            <div class="feat"><span class="feat-check" style="color:#6B7280">✓</span>Handlungsempfehlungen</div>
+          </div>
+        </div>
+      </div>
+      <!-- Respond -->
+      <div class="card featured">
+        <div class="card-badge">Beliebt</div>
+        <div class="card-head teal">
+          <div class="card-eyebrow">Bewertungsmanagement</div>
+          <div class="card-name">Respond</div>
+          <div class="card-sub">Aktiv reagieren</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price">590 € <small>/Monat</small></div>
+          <div class="responses-box" style="background:var(--teal-dim);">
+            <div class="responses-label" style="color:var(--teal);">Antworten inklusive</div>
+            <div class="responses-val">Bis zu 10 / Monat</div>
+          </div>
+          <div class="card-sla">SLA: 48h Response</div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Bis zu 10 KI-gestützte Antworten/Monat</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Antwort binnen 48h</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Tonalität nach eurer CI</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Monitoring + Alerts inklusive</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal)">✓</span>Monatliches Reporting</div>
+          </div>
+        </div>
+      </div>
+      <!-- Manage -->
+      <div class="card featured-dark">
+        <div class="card-badge" style="background:var(--teal-dark);color:white;">Empfohlen</div>
+        <div class="card-head dark">
+          <div class="card-eyebrow">Bewertungsmanagement</div>
+          <div class="card-name">Manage</div>
+          <div class="card-sub">Reputation aktiv steuern</div>
+        </div>
+        <div class="card-body">
+          <div class="card-price">990 € <small>/Monat</small></div>
+          <div class="responses-box" style="background:rgba(44,111,127,0.12);">
+            <div class="responses-label" style="color:var(--teal-dark);">Antworten inklusive</div>
+            <div class="responses-val">Unlimitierte Antworten</div>
+          </div>
+          <div class="card-sla">SLA: 24h Response</div>
+          <div class="card-features">
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Unlimitierte Antworten</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Antwort binnen 24h</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Proaktive Review-Kampagne</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Reputationsstrategie &amp; Beratung</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Monitoring + Alerts inklusive</div>
+            <div class="feat"><span class="feat-check" style="color:var(--teal-dark)">✓</span>Monthly Review-Report</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="market-insight">
+      <strong>Markt-Insight:</strong> 90,3% der DACH-Arbeitgeber ignorieren Bewertungen komplett. Antwortquote bei 1–2-Sterne-Reviews: nur 3,4%. Wer aktiv reagiert, gewinnt messbar mehr Bewerbervertrauen. <em>(Employer Telling Studie 2025)</em>
+    </div>
+  </div>
+
+  <!-- ── HIRING EXTENSION ── -->
+  <div id="tab-hiring" class="tab-panel">
+    <div class="info-bar">
+      <strong>kununu Hiring Extension</strong> — Job-Flatrate auf kununu. Alle offenen Stellen automatisch ausgespielt, unlimitiert, ohne Einzelbuchung. Jahresvertrag, staffelweise nach Unternehmensgröße.
+    </div>
+
+    <!-- USP GRID -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;">
+      <div style="background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);border-top:3px solid var(--teal);">
+        <div style="font-size:20px;margin-bottom:10px;">📋</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">All Jobs — unlimitiert</div>
+        <div style="font-size:12px;color:var(--mid-gray);line-height:1.6;">Alle offenen Stellen werden automatisch auf kununu ausgespielt — ohne Einzelbuchung, ohne manuellen Aufwand, ohne Limit.</div>
+      </div>
+      <div style="background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);border-top:3px solid var(--teal);">
+        <div style="font-size:20px;margin-bottom:10px;">🔄</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Jederzeit austauschbar</div>
+        <div style="font-size:12px;color:var(--mid-gray);line-height:1.6;">Stellen können jederzeit aktualisiert, ausgetauscht oder neu hinzugefügt werden — vollständig flexibel während der Vertragslaufzeit.</div>
+      </div>
+      <div style="background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);border-top:3px solid var(--teal);">
+        <div style="font-size:20px;margin-bottom:10px;">📈</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Höhere Conversion</div>
+        <div style="font-size:12px;color:var(--mid-gray);line-height:1.6;">Kandidaten sehen offene Stellen direkt auf dem Arbeitgeberprofil — kürzerer Weg vom Interesse zur Bewerbung, messbar höhere Conversion.</div>
+      </div>
+      <div style="background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);border-top:3px solid var(--teal);">
+        <div style="font-size:20px;margin-bottom:10px;">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Qualifiziertere Bewerbungen</div>
+        <div style="font-size:12px;color:var(--mid-gray);line-height:1.6;">Bewerber, die über das Employer Branding Profil kommen, haben bereits einen positiven Eindruck vom Unternehmen — weniger Noise, bessere Passung.</div>
+      </div>
+      <div style="background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);border-top:3px solid var(--teal);">
+        <div style="font-size:20px;margin-bottom:10px;">🔗</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Nahtlose Integration</div>
+        <div style="font-size:12px;color:var(--mid-gray);line-height:1.6;">Anbindung an bestehende ATS- und Bewerbermanagementsysteme. Kein manueller Upload — Stellen werden automatisch synchronisiert.</div>
+      </div>
+      <div style="background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.07);border-top:3px solid var(--teal);">
+        <div style="font-size:20px;margin-bottom:10px;">🏆</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Wettbewerbsvorteil</div>
+        <div style="font-size:12px;color:var(--mid-gray);line-height:1.6;">Stellenanzeigen erscheinen auch auf Profilen von Mitbewerbern — maximale Reichweite bei Kandidaten, die aktiv vergleichen.</div>
+      </div>
+    </div>
+
+    <!-- PREISTABELLE -->
+    <div style="background:var(--white);border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+      <div style="background:var(--charcoal);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;font-weight:700;color:var(--white);">Preisübersicht · Hiring Extension</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.45);">Alle Preise pro Jahr · zzgl. MwSt.</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--off-white);">
+            <th style="padding:12px 24px;text-align:left;font-size:11px;font-weight:700;color:var(--mid-gray);text-transform:uppercase;letter-spacing:0.08em;">Unternehmensgröße</th>
+            <th style="padding:12px 24px;text-align:right;font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.08em;">Hiring Extension / Jahr</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid var(--light-gray);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">1–100 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">4.490 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);background:rgba(74,175,196,0.04);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">101–200 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">7.490 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">201–500 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">12.990 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);background:rgba(74,175,196,0.04);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">501–1.000 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">19.990 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">1.001–5.000 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">24.990 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);background:rgba(74,175,196,0.04);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">5.001–10.000 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">39.990 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">10.001–30.000 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">44.990 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);background:rgba(74,175,196,0.04);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">30.001–100.000 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">59.900 €</td>
+          </tr>
+          <tr style="border-top:1px solid var(--light-gray);">
+            <td style="padding:13px 24px;font-size:13px;font-weight:600;">&gt; 100.000 Mitarbeitende</td>
+            <td style="padding:13px 24px;text-align:right;font-size:14px;font-weight:800;color:var(--charcoal);">79.900 €</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── KALKULATOR ── -->
+  <div id="tab-kalkulator" class="tab-panel">
+    <div class="calc-grid">
+      <!-- LEFT: Config -->
+      <div class="calc-left">
+        <h3>Paket zusammenstellen</h3>
+
+        <div class="calc-section">
+          <div class="calc-section-label">01 · kununu-Profil</div>
+          <select class="calc-select" id="calc-size" onchange="calcUpdate()">
+            <option value="1-100">1–100 Mitarbeitende</option>
+            <option value="101-200" selected>101–200 Mitarbeitende</option>
+            <option value="201-500">201–500 Mitarbeitende</option>
+            <option value="501-1000">501–1.000 Mitarbeitende</option>
+            <option value="1000+">Ab 1.000 Mitarbeitende</option>
+          </select>
+          <select class="calc-select" id="calc-profile" onchange="calcUpdate()">
+            <option value="basic">Basic</option>
+            <option value="core">Core</option>
+            <option value="pro" selected>Pro</option>
+          </select>
+          <!-- Profile Discount -->
+          <div class="discount-row">
+            <div class="discount-title">Rabatt auf Profilpreis</div>
+            <div class="discount-inputs">
+              <div class="discount-field">
+                <label>Prozent</label>
+                <div class="discount-input-wrap">
+                  <input class="discount-input" type="number" id="disc-pct" min="0" max="50" step="0.5" placeholder="0" oninput="discFromPct()">
+                  <span class="discount-suffix">%</span>
+                </div>
+              </div>
+              <div class="discount-divider">↔</div>
+              <div class="discount-field">
+                <label>Betrag</label>
+                <div class="discount-input-wrap">
+                  <input class="discount-input" type="number" id="disc-amt" min="0" step="10" placeholder="0" oninput="discFromAmt()">
+                  <span class="discount-suffix">€</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-section">
+          <div class="calc-section-label">
+            <input type="checkbox" id="calc-pflege-cb" checked onchange="calcUpdate()">
+            <label for="calc-pflege-cb">02 · Profilpflege</label>
+          </div>
+          <div id="calc-pflege-wrap">
+            <select class="calc-select" id="calc-pflege" onchange="calcUpdate()">
+              <option value="290">Starter – 290 €/Mo</option>
+              <option value="490" selected>Professional – 490 €/Mo</option>
+              <option value="790">Premium – 790 €/Mo</option>
+            </select>
+            <div class="calc-hint" id="pflege-hint">Bis zu 5 Profil-Änderungen/Monat</div>
+          </div>
+        </div>
+
+        <div class="calc-section">
+          <div class="calc-section-label">
+            <input type="checkbox" id="calc-review-cb" onchange="calcUpdate()">
+            <label for="calc-review-cb">03 · Bewertungsmanagement</label>
+          </div>
+          <div id="calc-review-wrap" style="display:none;">
+            <select class="calc-select" id="calc-review" onchange="calcUpdate()">
+              <option value="290">Monitor – 290 €/Mo</option>
+              <option value="590" selected>Respond – 590 €/Mo</option>
+              <option value="990">Manage – 990 €/Mo</option>
+            </select>
+            <div class="calc-hint" id="review-hint">Bis zu 10 Antworten/Monat</div>
+          </div>
+        </div>
+
+        <div class="calc-section">
+          <div class="calc-section-label">
+            <input type="checkbox" id="calc-hiring-cb" onchange="calcUpdate()">
+            <label for="calc-hiring-cb">04 · Hiring Extension</label>
+          </div>
+          <div id="calc-hiring-wrap" style="display:none;">
+            <select class="calc-select" id="calc-hiring-size" onchange="calcUpdate()">
+              <option value="4490">1–100 MA – 4.490 €/Jahr</option>
+              <option value="7490" selected>101–200 MA – 7.490 €/Jahr</option>
+              <option value="12990">201–500 MA – 12.990 €/Jahr</option>
+              <option value="19990">501–1.000 MA – 19.990 €/Jahr</option>
+              <option value="24990">1.001–5.000 MA – 24.990 €/Jahr</option>
+              <option value="39990">5.001–10.000 MA – 39.990 €/Jahr</option>
+              <option value="44990">10.001–30.000 MA – 44.990 €/Jahr</option>
+              <option value="59900">30.001–100.000 MA – 59.900 €/Jahr</option>
+              <option value="79900">&gt; 100.000 MA – 79.900 €/Jahr</option>
+            </select>
+            <div class="discount-row" style="margin-top:10px;">
+              <div class="discount-title">Rabatt auf Hiring Extension</div>
+              <div class="discount-inputs">
+                <div class="discount-field">
+                  <label>Prozent</label>
+                  <div class="discount-input-wrap">
+                    <input class="discount-input" type="number" id="disc-hiring-pct" min="0" max="50" step="0.5" placeholder="0" oninput="discHiringFromPct()">
+                    <span class="discount-suffix">%</span>
+                  </div>
+                </div>
+                <div class="discount-divider">↔</div>
+                <div class="discount-field">
+                  <label>Betrag</label>
+                  <div class="discount-input-wrap">
+                    <input class="discount-input" type="number" id="disc-hiring-amt" min="0" step="10" placeholder="0" oninput="discHiringFromAmt()">
+                    <span class="discount-suffix">€</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT: Offer -->
+      <div class="calc-right">
+        <div class="offer-panel" id="offer-panel">
+          <div class="offer-label">Angebot</div>
+          <div id="offer-content">
+            <div class="offer-na">Bitte Größe und Profil wählen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot-note">
+    Alle Preise zzgl. 19% MwSt. · Jahresverträge für Profile · Profilpflege &amp; Bewertungsmanagement monatlich kündbar · Stand Juni 2025
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────
+const kCosts = {
+  "1-100":    { basic:1490,  core:4890,  pro:5990  },
+  "101-200":  { basic:null,  core:6090,  pro:7390  },
+  "201-500":  { basic:null,  core:8290,  pro:9990  },
+  "501-1000": { basic:null,  core:11890, pro:14290 },
+  "1000+":    { basic:null,  core:null,  pro:null  },
+};
+const tmgFees = {
+  basic: { setup:490,  mgmt:800  },
+  core:  { setup:790,  mgmt:1800 },
+  pro:   { setup:1190, mgmt:3000 },
+};
+const profilePrices = {
+  "1-100":    { basic:2290,  core:6890,  pro:8390  },
+  "101-200":  { basic:null,  core:7890,  pro:9390  },
+  "201-500":  { basic:null,  core:10090, pro:12990 },
+  "501-1000": { basic:null,  core:13690, pro:17290 },
+  "1000+":    { basic:null,  core:null,  pro:null  },
+};
+const sizeLabels = {
+  "1-100":"1–100 MA","101-200":"101–200 MA","201-500":"201–500 MA",
+  "501-1000":"501–1.000 MA","1000+":"Ab 1.000 MA"
+};
+
+const pflegeHints = { "290":"Bis zu 2 Profil-Änderungen/Monat","490":"Bis zu 5 Profil-Änderungen/Monat","790":"Bis zu 10 Profil-Änderungen/Monat" };
+const reviewHints = { "290":"Bis zu 2 Antworten/Monat","590":"Bis zu 10 Antworten/Monat","990":"Unlimitierte Antworten" };
+
+function fmt(n) { return Math.round(n).toLocaleString('de-DE') + ' €'; }
+
+// ── PROFILE SIZE CHIPS ────────────────────────────
+let profileSize = "1-100";
+document.getElementById('profileSizeChips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('#profileSizeChips .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  profileSize = chip.dataset.s;
+  updateProfileCards();
+});
+
+function updateProfileCards() {
+  ['basic','core','pro'].forEach(tier => {
+    const p = profilePrices[profileSize][tier];
+    const card = document.getElementById('card-' + tier);
+    const prEl = document.getElementById('price-' + tier);
+    const stEl = document.getElementById('setup-' + tier);
+    const s = tmgFees[tier].setup;
+    if (!p) {
+      if (profileSize === '1000+') {
+        prEl.innerHTML = 'Auf Anfrage';
+        stEl.textContent = 'Individuelles Angebot';
+        card.classList.remove('dim');
+      } else {
+        prEl.innerHTML = '—';
+        stEl.textContent = 'Nicht verfügbar für diese Größe';
+        card.classList.add('dim');
+      }
+    } else {
+      prEl.innerHTML = p.toLocaleString('de-DE') + ' € <small>/ Jahr</small>';
+      stEl.textContent = 'zzgl. einmalig ' + s.toLocaleString('de-DE') + ' € Setup';
+      card.classList.remove('dim');
+    }
+  });
+}
+
+// ── TAB SWITCHING ─────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── KALKULATOR ────────────────────────────────────
+let discPct = 0, discAmt = 0;
+let discHiringPct = 0, discHiringAmt = 0;
+
+function discHiringFromPct() {
+  const hiringBase = parseFloat(document.getElementById('calc-hiring-size').value) || 0;
+  discHiringPct = parseFloat(document.getElementById('disc-hiring-pct').value) || 0;
+  if (discHiringPct < 0) discHiringPct = 0;
+  discHiringAmt = Math.round(hiringBase * discHiringPct / 100);
+  document.getElementById('disc-hiring-amt').value = discHiringAmt || '';
+  calcUpdate();
+}
+
+function discHiringFromAmt() {
+  const hiringBase = parseFloat(document.getElementById('calc-hiring-size').value) || 0;
+  discHiringAmt = parseFloat(document.getElementById('disc-hiring-amt').value) || 0;
+  if (discHiringAmt < 0) discHiringAmt = 0;
+  if (hiringBase && discHiringAmt > hiringBase) { discHiringAmt = hiringBase; document.getElementById('disc-hiring-amt').value = discHiringAmt; }
+  discHiringPct = hiringBase ? Math.round((discHiringAmt / hiringBase) * 1000) / 10 : 0;
+  document.getElementById('disc-hiring-pct').value = discHiringPct || '';
+  calcUpdate();
+}
+
+function discFromPct() {
+  const size = document.getElementById('calc-size').value;
+  const profile = document.getElementById('calc-profile').value;
+  const basePrice = profilePrices[size][profile];
+  discPct = parseFloat(document.getElementById('disc-pct').value) || 0;
+  if (discPct < 0) discPct = 0;
+  if (basePrice) {
+    discAmt = Math.round(basePrice * discPct / 100);
+    document.getElementById('disc-amt').value = discAmt || '';
+  }
+  calcUpdate();
+}
+
+function discFromAmt() {
+  const size = document.getElementById('calc-size').value;
+  const profile = document.getElementById('calc-profile').value;
+  const basePrice = profilePrices[size][profile];
+  discAmt = parseFloat(document.getElementById('disc-amt').value) || 0;
+  if (discAmt < 0) discAmt = 0;
+  if (basePrice && discAmt > basePrice) { discAmt = basePrice; document.getElementById('disc-amt').value = discAmt; }
+  if (basePrice) {
+    discPct = Math.round((discAmt / basePrice) * 1000) / 10;
+    document.getElementById('disc-pct').value = discPct || '';
+  }
+  calcUpdate();
+}
+
+function calcUpdate() {
+  const size    = document.getElementById('calc-size').value;
+  const profile = document.getElementById('calc-profile').value;
+  const hasPflege = document.getElementById('calc-pflege-cb').checked;
+  const hasReview = document.getElementById('calc-review-cb').checked;
+  const hasHiring = document.getElementById('calc-hiring-cb').checked;
+
+  // Wrap visibility
+  document.getElementById('calc-pflege-wrap').style.display = hasPflege ? 'block' : 'none';
+  document.getElementById('calc-review-wrap').style.display = hasReview ? 'block' : 'none';
+  document.getElementById('calc-hiring-wrap').style.display = hasHiring ? 'block' : 'none';
+
+  // Hints
+  const pfV = document.getElementById('calc-pflege').value;
+  const rvV = document.getElementById('calc-review').value;
+  document.getElementById('pflege-hint').textContent = pflegeHints[pfV] || '';
+  document.getElementById('review-hint').textContent = reviewHints[rvV] || '';
+
+  const hiringBase = hasHiring ? (parseFloat(document.getElementById('calc-hiring-size').value) || 0) : 0;
+  // Recalc hiring discount when size changes
+  if (hasHiring && document.getElementById('disc-hiring-pct').value && hiringBase) {
+    discHiringPct = parseFloat(document.getElementById('disc-hiring-pct').value) || 0;
+    discHiringAmt = Math.round(hiringBase * discHiringPct / 100);
+    document.getElementById('disc-hiring-amt').value = discHiringAmt || '';
+  }
+  const hiringDiscounted = hasHiring ? hiringBase - (discHiringAmt || 0) : 0;
+
+  const basePrice = profilePrices[size][profile];
+  const setup = tmgFees[profile].setup;
+
+  // Recalc discount when profile changes
+  const pctEl = document.getElementById('disc-pct');
+  const amtEl = document.getElementById('disc-amt');
+  if (pctEl.value && basePrice) {
+    discPct = parseFloat(pctEl.value) || 0;
+    discAmt = Math.round(basePrice * discPct / 100);
+    amtEl.value = discAmt || '';
+  }
+
+  const offerEl = document.getElementById('offer-content');
+
+  if (!basePrice || size === '1000+') {
+    offerEl.innerHTML = '<div class="offer-na">Dieses Paket ist auf Anfrage erhältlich.</div>';
+    return;
+  }
+
+  const pflegeMonth = hasPflege ? (parseFloat(pfV) || 0) : 0;
+  const reviewMonth = hasReview ? (parseFloat(rvV) || 0) : 0;
+
+  const profileDiscounted = basePrice - (discAmt || 0);
+  const totalYear = profileDiscounted + setup + (pflegeMonth + reviewMonth) * 12 + hiringDiscounted;
+  const totalMonth = profileDiscounted / 12 + pflegeMonth + reviewMonth + hiringDiscounted / 12;
+
+  const pflegeLabels = {"290":"Starter","490":"Professional","790":"Premium"};
+  const reviewLabels = {"290":"Monitor","590":"Respond","990":"Manage"};
+
+  let lines = '';
+  lines += `<div class="offer-line"><span>kununu ${profile.toUpperCase()} Profil (${sizeLabels[size]})</span><span>${fmt(basePrice)}/Jahr</span></div>`;
+  if (discAmt > 0) {
+    lines += `<div class="offer-line discount-line"><span>Rabatt (${discPct}%)</span><span>–${fmt(discAmt)}</span></div>`;
+    lines += `<div class="offer-line"><span style="font-weight:600;color:#E5E7EB;">Profil nach Rabatt</span><span style="font-weight:600;color:#E5E7EB;">${fmt(profileDiscounted)}/Jahr</span></div>`;
+  }
+  if (hasPflege) lines += `<div class="offer-line"><span>Profilpflege ${pflegeLabels[pfV]}</span><span>${fmt(pflegeMonth * 12)}/Jahr</span></div>`;
+  if (hasReview) lines += `<div class="offer-line"><span>Bewertungsmanagement ${reviewLabels[rvV]}</span><span>${fmt(reviewMonth * 12)}/Jahr</span></div>`;
+  if (hasHiring) {
+    lines += `<div class="offer-line"><span>Hiring Extension</span><span>${fmt(hiringBase)}/Jahr</span></div>`;
+    if (discHiringAmt > 0) {
+      lines += `<div class="offer-line discount-line"><span>Rabatt Hiring (${discHiringPct}%)</span><span>–${fmt(discHiringAmt)}</span></div>`;
+      lines += `<div class="offer-line"><span style="font-weight:600;color:#E5E7EB;">Hiring nach Rabatt</span><span style="font-weight:600;color:#E5E7EB;">${fmt(hiringDiscounted)}/Jahr</span></div>`;
+    }
+  }
+  lines += `<div class="offer-line"><span>Setup-Fee (einmalig)</span><span>${fmt(setup)}</span></div>`;
+
+  offerEl.innerHTML = `
+    ${lines}
+    <hr class="offer-divider">
+    <div class="offer-total-month">
+      <span>Monatlich (Ø)</span>
+      <span>${fmt(totalMonth)}</span>
+    </div>
+    <div class="offer-total-year">
+      <span>Gesamt Jahr 1</span>
+      <span>${fmt(totalYear)}</span>
+    </div>
+  `;
+}
+
+// Init
+updateProfileCards();
+calcUpdate();
+</script>
+</body>
+</html>
