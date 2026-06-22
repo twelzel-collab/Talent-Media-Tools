@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMG · Interne Tools</title>
+<script>
+  (function() {
+    var pwd = sessionStorage.getItem('tmg_auth');
+    if (pwd !== 'TMG_2026!') {
+      pwd = prompt('TMG · Bitte Passwort eingeben:');
+      if (pwd !== 'TMG_2026!') {
+        document.documentElement.innerHTML = '<body style="background:#2B2D31;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;"><p style="color:#6B7280;font-size:14px;">Zugriff verweigert.</p></body>';
+        return;
+      }
+      sessionStorage.setItem('tmg_auth', pwd);
+    }
+  })();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Montserrat',sans-serif;
+    background:#2B2D31;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:40px 24px;
+  }
+
+  .logo {
+    font-size:18px; font-weight:800; color:white;
+    letter-spacing:0.04em; margin-bottom:6px; text-align:center;
+  }
+  .logo span { color:#4AAFC4; }
+  .tagline {
+    font-size:11px; color:rgba(255,255,255,0.35);
+    letter-spacing:0.12em; text-transform:uppercase;
+    margin-bottom:52px; text-align:center;
+  }
+
+  .tools-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    max-width:860px;
+    width:100%;
+  }
+
+  .tool-card {
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(74,175,196,0.18);
+    border-radius:16px;
+    padding:32px 28px;
+    text-decoration:none;
+    transition:all 0.18s;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0;
+  }
+  .tool-card:hover {
+    background:rgba(74,175,196,0.08);
+    border-color:rgba(74,175,196,0.5);
+    transform:translateY(-3px);
+    box-shadow:0 8px 32px rgba(74,175,196,0.12);
+  }
+
+  .tool-icon {
+    font-size:28px;
+    margin-bottom:18px;
+  }
+  .tool-label {
+    font-size:9px; font-weight:700; letter-spacing:0.14em;
+    text-transform:uppercase; color:#4AAFC4; margin-bottom:8px;
+  }
+  .tool-title {
+    font-size:17px; font-weight:800; color:white;
+    line-height:1.3; margin-bottom:10px;
+  }
+  .tool-desc {
+    font-size:12px; color:rgba(255,255,255,0.45);
+    line-height:1.6; flex:1;
+  }
+  .tool-arrow {
+    margin-top:22px; font-size:13px; font-weight:700;
+    color:#4AAFC4; letter-spacing:0.04em;
+  }
+
+  .footer-note {
+    margin-top:48px;
+    font-size:11px;
+    color:rgba(255,255,255,0.2);
+    text-align:center;
+    letter-spacing:0.04em;
+  }
+
+  @media (max-width:680px) {
+    .tools-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="logo">T<span>M</span>G <span style="font-weight:300;font-size:13px;letter-spacing:0.1em;color:rgba(255,255,255,0.3);">TALENT MEDIA</span></div>
+  <div class="tagline">Interne Tools · Nur für autorisierte Mitarbeiter</div>
+
+  <div class="tools-grid">
+
+    <a class="tool-card" href="tmg_website_v2.html">
+      <div class="tool-icon">🌐</div>
+      <div class="tool-label">Öffentlich</div>
+      <div class="tool-title">Website Vorschau</div>
+      <div class="tool-desc">Die aktuelle TMG-Website mit allen Sektionen — Employer Branding, Profilpflege, Bewertungsmanagement, Über Uns, HireEngine und Karriere.</div>
+      <div class="tool-arrow">Öffnen →</div>
+    </a>
+
+    <a class="tool-card" href="tmg_preisliste.html">
+      <div class="tool-icon">🧮</div>
+      <div class="tool-label">Intern · Vertrieb</div>
+      <div class="tool-title">Preisliste & Kalkulator</div>
+      <div class="tool-desc">Alle Pakete und Preise auf einen Blick — mit interaktivem Kalkulator, Rabattfunktion für Profil und Hiring Extension, und Angebotsübersicht.</div>
+      <div class="tool-arrow">Öffnen →</div>
+    </a>
+
+    <a class="tool-card" href="tmg-einwand-handling.html">
+      <div class="tool-icon">💬</div>
+      <div class="tool-label">Intern · Vertrieb</div>
+      <div class="tool-title">Einwand-Handling</div>
+      <div class="tool-desc">8 häufige Kundeneinwände mit Diagnose, DAF-Methode, INA-Argumentation und Closing-Technik nach Alexander Marx — für abschlussorientierte Gespräche.</div>
+      <div class="tool-arrow">Öffnen →</div>
+    </a>
+
+  </div>
+
+  <div class="footer-note">
+    Talent Media Group · Eine Tochtergesellschaft der Dupont Consulting Group · Alle Inhalte vertraulich
+  </div>
+
+</body>
+</html>
